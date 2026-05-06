@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { Clock } from 'lucide-vue-next'
+import { Clock, Building2, Users, Shield, Tag } from 'lucide-vue-next'
 import {
   Sidebar,
   SidebarContent,
@@ -13,8 +13,10 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
+const auth = useAuthStore()
 </script>
 
 <template>
@@ -44,6 +46,46 @@ const route = useRoute()
                 <RouterLink :to="{ name: 'time' }">
                   <Clock />
                   <span>My Time</span>
+                </RouterLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+
+      <SidebarGroup v-if="auth.isAdmin || auth.isSuperAdmin">
+        <SidebarGroupLabel>Admin</SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            <SidebarMenuItem v-if="auth.isSuperAdmin">
+              <SidebarMenuButton as-child :is-active="route.name === 'admin.organisations'" tooltip="Organisations">
+                <RouterLink :to="{ name: 'admin.organisations' }">
+                  <Building2 />
+                  <span>Organisations</span>
+                </RouterLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton as-child :is-active="route.name === 'admin.users'" tooltip="Users">
+                <RouterLink :to="{ name: 'admin.users' }">
+                  <Users />
+                  <span>Users</span>
+                </RouterLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton as-child :is-active="route.name === 'admin.roles'" tooltip="Roles">
+                <RouterLink :to="{ name: 'admin.roles' }">
+                  <Shield />
+                  <span>Roles</span>
+                </RouterLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton as-child :is-active="route.name === 'admin.activities'" tooltip="Activities">
+                <RouterLink :to="{ name: 'admin.activities' }">
+                  <Tag />
+                  <span>Activities</span>
                 </RouterLink>
               </SidebarMenuButton>
             </SidebarMenuItem>

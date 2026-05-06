@@ -14,6 +14,30 @@ const routes: RouteRecordRaw[] = [
     meta: { auth: true },
   },
   {
+    path: '/admin/organisations',
+    name: 'admin.organisations',
+    component: () => import('@/views/admin/OrganisationsView.vue'),
+    meta: { auth: true, superAdmin: true },
+  },
+  {
+    path: '/admin/users',
+    name: 'admin.users',
+    component: () => import('@/views/admin/UsersView.vue'),
+    meta: { auth: true, admin: true },
+  },
+  {
+    path: '/admin/roles',
+    name: 'admin.roles',
+    component: () => import('@/views/admin/RolesView.vue'),
+    meta: { auth: true, admin: true },
+  },
+  {
+    path: '/admin/activities',
+    name: 'admin.activities',
+    component: () => import('@/views/admin/ActivitiesView.vue'),
+    meta: { auth: true, admin: true },
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('@/views/auth/LoginView.vue'),
@@ -50,6 +74,14 @@ router.beforeEach(async (to) => {
   }
 
   if (to.meta.guest && authStore.isAuthenticated) {
+    return { name: 'time' }
+  }
+
+  if (to.meta.superAdmin && !authStore.isSuperAdmin) {
+    return { name: 'time' }
+  }
+
+  if (to.meta.admin && !authStore.isAdmin && !authStore.isSuperAdmin) {
     return { name: 'time' }
   }
 })
