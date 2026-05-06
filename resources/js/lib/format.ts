@@ -37,3 +37,17 @@ export const formatRelativeTime = (date: string): string => {
 }
 
 export const stripHtml = (html: string) => html.replace(/<[^>]*>/g, '').trim()
+
+export const minutesToHm = (minutes: number): string => {
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return m === 0 ? `${h}h` : `${h}h ${m}m`
+}
+
+export const hmToMinutes = (hm: string): number => {
+  const [h, m] = hm.split(':').map(Number)
+  return h * 60 + m
+}
+
+export const entryMinutes = (startedAt: string, endedAt: string): number =>
+  hmToMinutes(endedAt) - hmToMinutes(startedAt)
