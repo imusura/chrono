@@ -20,15 +20,9 @@ const routes: RouteRecordRaw[] = [
     meta: { auth: true, superAdmin: true },
   },
   {
-    path: '/admin/users',
-    name: 'admin.users',
-    component: () => import('@/views/admin/UsersView.vue'),
-    meta: { auth: true, admin: true },
-  },
-  {
-    path: '/admin/roles',
-    name: 'admin.roles',
-    component: () => import('@/views/admin/RolesView.vue'),
+    path: '/admin/organisation',
+    name: 'admin.organisation',
+    component: () => import('@/views/admin/OrganisationView.vue'),
     meta: { auth: true, admin: true },
   },
   {
