@@ -65,30 +65,32 @@ const auth = useAuthStore()
                 </RouterLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton as-child :is-active="route.name === 'admin.users'" tooltip="Users">
-                <RouterLink :to="{ name: 'admin.users' }">
-                  <Users />
-                  <span>Users</span>
-                </RouterLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton as-child :is-active="route.name === 'admin.roles'" tooltip="Roles">
-                <RouterLink :to="{ name: 'admin.roles' }">
-                  <Shield />
-                  <span>Roles</span>
-                </RouterLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton as-child :is-active="route.name === 'admin.activities'" tooltip="Activities">
-                <RouterLink :to="{ name: 'admin.activities' }">
-                  <Tag />
-                  <span>Activities</span>
-                </RouterLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            <template v-if="auth.isAdmin">
+              <SidebarMenuItem>
+                <SidebarMenuButton as-child :is-active="route.name === 'admin.users'" tooltip="Users">
+                  <RouterLink :to="{ name: 'admin.users' }">
+                    <Users />
+                    <span>Users</span>
+                  </RouterLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton as-child :is-active="route.name === 'admin.roles'" tooltip="Roles">
+                  <RouterLink :to="{ name: 'admin.roles' }">
+                    <Shield />
+                    <span>Roles</span>
+                  </RouterLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton as-child :is-active="route.name === 'admin.activities'" tooltip="Activities">
+                  <RouterLink :to="{ name: 'admin.activities' }">
+                    <Tag />
+                    <span>Activities</span>
+                  </RouterLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </template>
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>

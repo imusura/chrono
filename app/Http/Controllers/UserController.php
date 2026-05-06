@@ -16,6 +16,7 @@ class UserController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $users = User::where('organisation_id', $request->user()->organisation_id)
+            ->where('is_super_admin', false)
             ->orderBy('name')
             ->get();
 
