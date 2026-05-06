@@ -31,15 +31,6 @@ const auth = useAuthStore()
         </RouterLink>
 
         <RouterLink
-          v-if="auth.isAdmin || auth.isSuperAdmin"
-          :to="{ name: 'admin.activities' }"
-          class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
-          :class="route.name === 'admin.activities' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'"
-        >
-          Activities
-        </RouterLink>
-
-        <RouterLink
           v-if="auth.isSuperAdmin"
           :to="{ name: 'admin.organisations' }"
           class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"

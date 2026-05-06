@@ -26,12 +26,6 @@ const routes: RouteRecordRaw[] = [
     meta: { auth: true, admin: true },
   },
   {
-    path: '/admin/activities',
-    name: 'admin.activities',
-    component: () => import('@/views/admin/ActivitiesView.vue'),
-    meta: { auth: true, admin: true },
-  },
-  {
     path: '/login',
     name: 'login',
     component: () => import('@/views/auth/LoginView.vue'),
