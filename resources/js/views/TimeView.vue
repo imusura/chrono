@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import AppLayout from '@/components/layout/AppLayout.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useTimeEntries } from '@/composables/useTimeEntries'
 import { minutesToHm, entryMinutes } from '@/lib/format'
@@ -78,6 +79,7 @@ const isToday = (date: string) => date === now.toISOString().slice(0, 10)
 </script>
 
 <template>
+  <AppLayout>
   <div class="flex flex-col h-full">
     <div class="flex items-center justify-between px-6 py-4 border-b">
       <h1 class="text-lg font-semibold capitalize">{{ monthLabel }}</h1>
@@ -162,4 +164,5 @@ const isToday = (date: string) => date === now.toISOString().slice(0, 10)
       @destroy="handleDestroy"
     />
   </div>
+  </AppLayout>
 </template>

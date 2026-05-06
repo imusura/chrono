@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\OrganisationController;
 use App\Http\Controllers\TimeEntryController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -19,4 +20,11 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/time-entries', [TimeEntryController::class, 'store']);
     Route::put('/time-entries/{timeEntry}', [TimeEntryController::class, 'update']);
     Route::delete('/time-entries/{timeEntry}', [TimeEntryController::class, 'destroy']);
+
+    Route::middleware('super_admin')->group(function (): void {
+        Route::get('/organisations', [OrganisationController::class, 'index']);
+        Route::post('/organisations', [OrganisationController::class, 'store']);
+        Route::put('/organisations/{organisation}', [OrganisationController::class, 'update']);
+        Route::delete('/organisations/{organisation}', [OrganisationController::class, 'destroy']);
+    });
 });
