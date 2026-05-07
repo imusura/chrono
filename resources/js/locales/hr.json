@@ -142,8 +142,8 @@
     "dialog": {
       "title": "Pozovi korisnike",
       "emails": "E-mail adrese",
-      "emailPlaceholder": "ime{'@'}primjer.com",
-      "emailHint": "Pritisnite Enter ili zarez za dodavanje svake adrese.",
+      "emailPlaceholder": "ime{'@'}primjer.com, ana{'@'}primjer.com",
+      "emailHint": "Odvojite adrese zarezom, točkom-zarezom ili novim retkom.",
       "emailRequired": "Dodajte barem jednu e-mail adresu.",
       "contractedHours": "Ugovoreni sati / dan (HH:MM)",
       "role": "Uloga",

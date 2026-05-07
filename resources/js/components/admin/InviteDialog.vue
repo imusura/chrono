@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Dialog,
   DialogContent,
@@ -12,10 +12,10 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { X } from 'lucide-vue-next'
 import { useAdminRoles } from '@/composables/useAdminRoles'
 import { invitationService } from '@/services/invitationService'
 import { hmToDecimalHours } from '@/lib/format'
+import { Input } from '@/components/ui/input'
 import { ValidationError } from '@/types'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
@@ -33,17 +33,24 @@ const { t } = useI18n()
 const orgIdRef = computed(() => props.organisationId)
 const { query: rolesQuery } = useAdminRoles(orgIdRef)
 
-const emailInput = ref('')
-const emails = ref<string[]>([])
+const emailsRaw = ref('')
 const contractedHoursHm = ref('8:00')
 const isAdmin = ref(false)
 const selectedRoleIds = ref<number[]>([])
 const errors = ref<Record<string, string[]>>({})
 const isPending = ref(false)
 
+const parseEmails = (): string[] => {
+  return [...new Set(
+    emailsRaw.value
+      .split(/[\s,;]+/)
+      .map(s => s.trim())
+      .filter(s => s.includes('@'))
+  )]
+}
+
 const reset = () => {
-  emailInput.value = ''
-  emails.value = []
+  emailsRaw.value = ''
   contractedHoursHm.value = '8:00'
   isAdmin.value = false
   selectedRoleIds.value = []
@@ -54,35 +61,12 @@ watch(() => props.open, (open) => {
   if (!open) reset()
 })
 
-const addEmail = () => {
-  const val = emailInput.value.trim()
-  if (!val || emails.value.includes(val)) {
-    emailInput.value = ''
-    return
-  }
-  emails.value.push(val)
-  emailInput.value = ''
-}
-
-const removeEmail = (email: string) => {
-  emails.value = emails.value.filter((e) => e !== email)
-}
-
-const onEmailKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Enter' || e.key === ',') {
-    e.preventDefault()
-    addEmail()
-  }
-}
-
 const submit = async () => {
   errors.value = {}
 
-  if (emailInput.value.trim()) {
-    addEmail()
-  }
+  const emails = parseEmails()
 
-  if (!emails.value.length) {
+  if (!emails.length) {
     errors.value = { emails: [t('invite.dialog.emailRequired')] }
     return
   }
@@ -91,7 +75,7 @@ const submit = async () => {
 
   try {
     const result = await invitationService.store({
-      emails: emails.value,
+      emails,
       role_ids: selectedRoleIds.value,
       contracted_hours: hmToDecimalHours(contractedHoursHm.value),
       is_admin: isAdmin.value,
@@ -129,26 +113,11 @@ const submit = async () => {
       <div class="grid gap-4 py-2">
         <div class="grid gap-1.5">
           <Label>{{ t('invite.dialog.emails') }}</Label>
-          <div class="flex flex-wrap gap-1.5 rounded-md border px-3 py-2 min-h-10 focus-within:ring-1 focus-within:ring-ring">
-            <span
-              v-for="email in emails"
-              :key="email"
-              class="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium"
-            >
-              {{ email }}
-              <button type="button" @click="removeEmail(email)" class="hover:text-destructive">
-                <X class="h-3 w-3" />
-              </button>
-            </span>
-            <input
-              v-model="emailInput"
-              type="email"
-              :placeholder="emails.length ? '' : t('invite.dialog.emailPlaceholder')"
-              class="flex-1 min-w-24 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-              @keydown="onEmailKeydown"
-              @blur="addEmail"
-            />
-          </div>
+          <Textarea
+            v-model="emailsRaw"
+            :placeholder="t('invite.dialog.emailPlaceholder')"
+            rows="4"
+          />
           <p class="text-xs text-muted-foreground">{{ t('invite.dialog.emailHint') }}</p>
           <p v-if="errors.emails" class="text-sm text-destructive">{{ errors.emails[0] }}</p>
         </div>

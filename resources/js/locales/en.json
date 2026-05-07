@@ -142,8 +142,8 @@
     "dialog": {
       "title": "Invite users",
       "emails": "Email addresses",
-      "emailPlaceholder": "name{'@'}example.com",
-      "emailHint": "Press Enter or comma to add each address.",
+      "emailPlaceholder": "name{'@'}example.com, jane{'@'}example.com",
+      "emailHint": "Separate addresses with commas, semicolons, or new lines.",
       "emailRequired": "Add at least one email address.",
       "contractedHours": "Contracted hours / day (HH:MM)",
       "role": "Role",
