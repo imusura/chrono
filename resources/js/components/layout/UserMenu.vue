@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { LogOut, Sun, Moon, Monitor, Languages } from 'lucide-vue-next'
+import { LogOut, Sun, Moon, Monitor, Languages, Building2 } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import { useAppearanceStore } from '@/stores/appearance'
 import { useLocaleStore } from '@/stores/locale'
@@ -49,6 +49,15 @@ const handleLogout = async () => {
           </span>
         </div>
       </DropdownMenuLabel>
+      <template v-if="authStore.isSuperAdmin">
+        <DropdownMenuSeparator />
+        <DropdownMenuItem as-child>
+          <RouterLink :to="{ name: 'admin.organisations' }" class="flex items-center w-full">
+            <Building2 class="mr-2 size-4" />
+            {{ t('nav.organisations') }}
+          </RouterLink>
+        </DropdownMenuItem>
+      </template>
       <DropdownMenuSeparator />
       <DropdownMenuSub>
         <DropdownMenuSubTrigger>

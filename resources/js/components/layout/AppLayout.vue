@@ -33,15 +33,6 @@ const { t } = useI18n()
         >
           {{ t('nav.organisation') }}
         </RouterLink>
-
-        <RouterLink
-          v-if="auth.isSuperAdmin"
-          :to="{ name: 'admin.organisations' }"
-          class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
-          :class="route.name === 'admin.organisations' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'"
-        >
-          {{ t('nav.organisations') }}
-        </RouterLink>
       </nav>
 
       <div class="ml-auto">
