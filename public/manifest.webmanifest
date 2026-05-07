@@ -1,7 +1,7 @@
 {
-  "name": "TickIt",
-  "short_name": "TickIt",
-  "description": "Project management and ticketing for teams.",
+  "name": "Chrono",
+  "short_name": "Chrono",
+  "description": "Time tracking for teams.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

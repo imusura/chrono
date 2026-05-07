@@ -1,7 +1,7 @@
-const VERSION = 'v2'
-const CACHE_STATIC = `tickit-static-${VERSION}`
-const CACHE_ASSETS = `tickit-assets-${VERSION}`
-const CACHE_PAGES = `tickit-pages-${VERSION}`
+const VERSION = 'v1'
+const CACHE_STATIC = `chrono-static-${VERSION}`
+const CACHE_ASSETS = `chrono-assets-${VERSION}`
+const CACHE_PAGES = `chrono-pages-${VERSION}`
 
 const PRECACHE_URLS = [
   '/manifest.webmanifest',

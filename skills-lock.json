@@ -21,6 +21,12 @@
       "sourceType": "github",
       "computedHash": "2102505784cb834cf65ec12f900fea772737dc928ce92020c87924def637f58d"
     },
+    "better-auth-security-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "security/SKILL.md",
+      "computedHash": "ed38caef4b297cc399d717258d6ea4e6ecb8894c453c83450064c7e7c6e5cc02"
+    },
     "bolder": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
@@ -71,6 +77,12 @@
       "sourceType": "github",
       "computedHash": "47273e366f900b19ae795460bc7f565bccd8c6c40659a33f24630fa29c7f2251"
     },
+    "laravel-security": {
+      "source": "affaan-m/everything-claude-code",
+      "sourceType": "github",
+      "skillPath": "skills/laravel-security/SKILL.md",
+      "computedHash": "86d246c2eb8fcda4586e13f9e32cd55e3ff222f6079a7f0b4442ef5e4e0971e7"
+    },
     "laravel-specialist": {
       "source": "jeffallan/claude-skills",
       "sourceType": "github",
@@ -105,6 +117,12 @@
       "source": "pbakaus/impeccable",
       "sourceType": "github",
       "computedHash": "aefec3a5171c612cce82fbde0ee9bdb6a667c71b98de6fd5846df2f14dfe32bf"
+    },
+    "security-review": {
+      "source": "getsentry/skills",
+      "sourceType": "github",
+      "skillPath": "skills/security-review/SKILL.md",
+      "computedHash": "1eee1e41aa0a0e75dbbe0cac387e3d61bedf51af1888f184301a173731e6973e"
     },
     "teach-impeccable": {
       "source": "pbakaus/impeccable",
