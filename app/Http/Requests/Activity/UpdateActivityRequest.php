@@ -9,12 +9,14 @@ class UpdateActivityRequest extends FormRequest
 {
     public function rules(): array
     {
+        $orgId = $this->route('activity')->organisation_id;
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'color' => ['required', 'string', 'max:50'],
             'is_active' => ['boolean'],
             'role_ids' => ['nullable', 'array'],
-            'role_ids.*' => ['integer', Rule::exists('roles', 'id')->where('organisation_id', $this->user()->organisation_id)],
+            'role_ids.*' => ['integer', Rule::exists('roles', 'id')->where('organisation_id', $orgId)],
         ];
     }
 }
