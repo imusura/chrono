@@ -19,7 +19,7 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return response()->json(new UserResource($request->user()));
+        return response()->json(new UserResource($request->user()->loadMissing('organisation')));
     }
 
     public function logout(Request $request): JsonResponse

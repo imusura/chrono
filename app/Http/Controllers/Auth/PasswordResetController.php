@@ -12,6 +12,7 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -19,13 +20,19 @@ class PasswordResetController extends Controller
 {
     public function sendResetLink(ForgotPasswordRequest $request): JsonResponse
     {
+        $request->ensureIsNotRateLimited();
+
         $status = Password::sendResetLink($request->only('email'));
 
         if ($status !== Password::RESET_LINK_SENT) {
+            RateLimiter::hit($request->throttleKey());
+
             throw ValidationException::withMessages([
                 'email' => [__($status)],
             ]);
         }
+
+        RateLimiter::clear($request->throttleKey());
 
         return response()->json(['message' => __($status)]);
     }

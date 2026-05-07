@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TimeEntryMode;
 use App\Http\Requests\TimeEntry\StoreTimeEntryRequest;
 use App\Http\Requests\TimeEntry\UpdateTimeEntryRequest;
 use App\Http\Resources\TimeEntryResource;
@@ -15,7 +16,7 @@ class TimeEntryController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $request->validate([
-            'year' => ['required', 'integer', 'min:2000', 'max:2100'],
+            'year'  => ['required', 'integer', 'min:2000', 'max:2100'],
             'month' => ['required', 'integer', 'min:1', 'max:12'],
         ]);
 
@@ -33,7 +34,10 @@ class TimeEntryController extends Controller
 
     public function store(StoreTimeEntryRequest $request): TimeEntryResource
     {
-        $entry = $request->user()->timeEntries()->create($request->validated());
+        $data = $request->validated();
+        $data['duration_minutes'] = $this->resolveDuration($request, $data);
+
+        $entry = $request->user()->timeEntries()->create($data);
         $entry->load('activity');
 
         return new TimeEntryResource($entry);
@@ -43,7 +47,10 @@ class TimeEntryController extends Controller
     {
         $this->authorize('update', $timeEntry);
 
-        $timeEntry->update($request->validated());
+        $data = $request->validated();
+        $data['duration_minutes'] = $this->resolveDuration($request, $data);
+
+        $timeEntry->update($data);
         $timeEntry->load('activity');
 
         return new TimeEntryResource($timeEntry);
@@ -51,10 +58,24 @@ class TimeEntryController extends Controller
 
     public function destroy(TimeEntry $timeEntry): JsonResponse
     {
-        $this->authorize('update', $timeEntry);
+        $this->authorize('delete', $timeEntry);
 
         $timeEntry->delete();
 
         return response()->json(null, 204);
+    }
+
+    private function resolveDuration(Request $request, array $data): int
+    {
+        $mode = $request->user()->organisation?->time_entry_mode ?? TimeEntryMode::Range;
+
+        if ($mode === TimeEntryMode::Duration) {
+            return (int) $data['duration_minutes'];
+        }
+
+        [$sh, $sm] = array_map('intval', explode(':', $data['started_at']));
+        [$eh, $em] = array_map('intval', explode(':', $data['ended_at']));
+
+        return ($eh * 60 + $em) - ($sh * 60 + $sm);
     }
 }
