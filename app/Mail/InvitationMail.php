@@ -25,7 +25,7 @@ class InvitationMail extends Mailable
         return new Content(
             view: 'emails.invitation',
             with: [
-                'acceptUrl' => config('app.frontend_url') . '/accept-invite/' . $this->invitation->token,
+                'acceptUrl' => config('app.url') . '/accept-invite/' . $this->invitation->token,
                 'email' => $this->invitation->email,
             ],
         );
