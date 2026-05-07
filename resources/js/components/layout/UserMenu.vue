@@ -49,9 +49,15 @@ const handleLogout = async () => {
           </span>
         </div>
       </DropdownMenuLabel>
-      <template v-if="authStore.isSuperAdmin">
+      <template v-if="authStore.isAdmin || authStore.isSuperAdmin">
         <DropdownMenuSeparator />
-        <DropdownMenuItem as-child>
+        <DropdownMenuItem v-if="authStore.isAdmin || authStore.isSuperAdmin" as-child>
+          <RouterLink :to="{ name: 'admin.organisation' }" class="flex items-center w-full">
+            <Building2 class="mr-2 size-4" />
+            {{ t('nav.organisation') }}
+          </RouterLink>
+        </DropdownMenuItem>
+        <DropdownMenuItem v-if="authStore.isSuperAdmin" as-child>
           <RouterLink :to="{ name: 'admin.organisations' }" class="flex items-center w-full">
             <Building2 class="mr-2 size-4" />
             {{ t('nav.organisations') }}

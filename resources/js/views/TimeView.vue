@@ -108,7 +108,7 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
 <template>
   <AppLayout full-bleed>
   <div class="flex flex-col h-full">
-    <div class="flex items-center justify-between px-6 py-4 border-b">
+    <div class="flex items-center justify-between px-3 sm:px-6 py-4 border-b">
       <h1 class="text-lg font-semibold capitalize">{{ monthLabel }}</h1>
       <div class="flex gap-1">
         <Button variant="outline" size="icon" @click="prevMonth">
@@ -120,7 +120,7 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
       </div>
     </div>
 
-    <div class="px-6 py-3 border-b space-y-2">
+    <div class="px-3 sm:px-6 py-3 border-b space-y-2">
       <div class="flex items-baseline justify-between text-sm">
         <span class="text-muted-foreground">
           <span class="font-semibold text-foreground tabular-nums">{{ minutesToHm(monthLoggedMinutes) }}</span>
@@ -148,7 +148,7 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
     </div>
 
     <!-- Time ruler (range mode only) -->
-    <div v-if="timeEntryMode === 'range'" class="flex items-end px-6 pt-2 border-b">
+    <div v-if="timeEntryMode === 'range'" class="hidden sm:flex items-end px-6 pt-2 border-b">
       <div class="w-10 shrink-0 mr-4" />
       <div class="w-28 shrink-0 mr-4" />
       <div class="flex-1 relative h-4 min-w-0">
@@ -162,8 +162,8 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
     </div>
 
     <div class="flex-1 overflow-y-auto relative">
-      <!-- Continuous vertical grid lines across all rows (range mode only) -->
-      <div v-if="timeEntryMode === 'range'" class="absolute inset-0 pointer-events-none" aria-hidden="true" style="left: calc(1.5rem + 2.5rem + 1rem + 7rem + 1rem); right: 1.5rem;">
+      <!-- Continuous vertical grid lines across all rows (range mode only, desktop only) -->
+      <div v-if="timeEntryMode === 'range'" class="hidden sm:block absolute inset-0 pointer-events-none" aria-hidden="true" style="left: calc(1.5rem + 2.5rem + 1rem + 7rem + 1rem); right: 1.5rem;">
         <template v-for="h in [6,7,8,9,10,11,12,13,14,15,16,17]" :key="h">
           <div
             class="absolute inset-y-0 w-px bg-border"
@@ -173,7 +173,7 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
       </div>
 
       <template v-if="query.isLoading.value">
-        <div class="px-6 py-3 space-y-2">
+        <div class="px-3 sm:px-6 py-3 space-y-2">
           <Skeleton v-for="i in 20" :key="i" class="h-12 w-full rounded-lg" />
         </div>
       </template>
@@ -185,7 +185,7 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
           :class="[index > 0 && day.iso.getDay() === 1 ? 'mt-3' : '']"
         >
           <button
-            class="relative w-full flex items-center gap-4 px-6 py-3 text-left transition-colors"
+            class="relative w-full flex items-center gap-3 sm:gap-4 px-3 sm:px-6 py-3 text-left transition-colors"
             :class="[
               isNonWorking(day.date) ? 'bg-rose-100 dark:bg-rose-950/40' :
               isWeekend(day.iso) ? 'bg-muted hover:bg-muted' :
@@ -206,7 +206,7 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
               </p>
             </div>
 
-            <div class="w-28 flex-shrink-0 flex items-baseline gap-1">
+            <div class="w-16 sm:w-28 flex-shrink-0 flex items-baseline gap-1">
               <template v-if="dayStatus(day.date) !== 'empty'">
                 <span
                   class="text-sm font-bold tabular-nums"
@@ -214,7 +214,7 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
                     ? 'text-emerald-600 dark:text-emerald-400'
                     : 'text-amber-600 dark:text-amber-400'"
                 >{{ minutesToHm(dayMinutes(day.date)) }}</span>
-                <span class="text-xs text-muted-foreground">/ {{ minutesToHm(contractedMinutes) }}</span>
+                <span class="hidden sm:inline text-xs text-muted-foreground">/ {{ minutesToHm(contractedMinutes) }}</span>
               </template>
             </div>
 
