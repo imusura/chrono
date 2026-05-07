@@ -3,6 +3,11 @@ import { ref } from 'vue'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Plus, Pencil, Trash2 } from 'lucide-vue-next'
 import type { TimeEntry, StoreTimeEntryPayload, UpdateTimeEntryPayload, TimeEntryMode } from '@/types'
 import { minutesToHm, formatDayLong } from '@/lib/format'
@@ -31,6 +36,8 @@ const { t } = useI18n()
 const dialogOpen = ref(false)
 const editingEntry = ref<TimeEntry | null>(null)
 const dialogRef = ref<InstanceType<typeof TimeEntryDialog> | null>(null)
+const deleteDialogOpen = ref(false)
+const deletingEntry = ref<TimeEntry | null>(null)
 
 const totalMinutes = () =>
   props.entries.reduce((sum, e) => sum + e.duration_minutes, 0)
@@ -43,6 +50,18 @@ const openAdd = () => {
 const openEdit = (entry: TimeEntry) => {
   editingEntry.value = entry
   dialogOpen.value = true
+}
+
+const openDelete = (entry: TimeEntry) => {
+  deletingEntry.value = entry
+  deleteDialogOpen.value = true
+}
+
+const confirmDelete = async () => {
+  if (!deletingEntry.value) return
+  await props.onDestroy(deletingEntry.value.id)
+  deleteDialogOpen.value = false
+  deletingEntry.value = null
 }
 
 const handleSave = async (payload: StoreTimeEntryPayload | UpdateTimeEntryPayload) => {
@@ -107,7 +126,7 @@ const handleSave = async (payload: StoreTimeEntryPayload | UpdateTimeEntryPayloa
             <Button variant="ghost" size="icon" class="h-7 w-7" @click="openEdit(entry)">
               <Pencil class="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" class="h-7 w-7 text-destructive hover:text-destructive" @click="onDestroy(entry.id)">
+            <Button variant="ghost" size="icon" class="h-7 w-7 text-destructive hover:text-destructive" @click="openDelete(entry)">
               <Trash2 class="h-3.5 w-3.5" />
             </Button>
           </div>
@@ -140,4 +159,24 @@ const handleSave = async (payload: StoreTimeEntryPayload | UpdateTimeEntryPayloa
     @update:open="dialogOpen = $event"
     @save="handleSave"
   />
+
+  <AlertDialog :open="deleteDialogOpen" @update:open="deleteDialogOpen = $event">
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>{{ t('daySheet.delete.title') }}</AlertDialogTitle>
+        <AlertDialogDescription>
+          {{ t('daySheet.delete.description', { name: deletingEntry?.activity.name }) }}
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel>{{ t('daySheet.delete.cancel') }}</AlertDialogCancel>
+        <AlertDialogAction
+          class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          @click="confirmDelete"
+        >
+          {{ t('daySheet.delete.confirm') }}
+        </AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
 </template>

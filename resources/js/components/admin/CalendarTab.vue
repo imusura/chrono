@@ -9,6 +9,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { useNonWorkingDays } from '@/composables/useNonWorkingDays'
 import { toIsoDate, formatMonthYear } from '@/lib/format'
 import type { NonWorkingDay } from '@/types'
@@ -65,6 +70,8 @@ const isCurrentMonth = (d: Date) => d.getMonth() === month.value
 const openDate = ref<string | null>(null)
 const popoverName = ref('')
 const editingId = ref<number | null>(null)
+const deleteDialogOpen = ref(false)
+const pendingDeleteId = ref<number | null>(null)
 
 const openPopover = (d: Date) => {
   const iso = toIsoDate(d)
@@ -96,8 +103,15 @@ const saveCustomDay = async () => {
   closePopover()
 }
 
-const deleteCustomDay = async (id: number) => {
-  await destroyMutation.mutateAsync(id)
+const openDeleteDialog = (id: number) => {
+  pendingDeleteId.value = id
+  deleteDialogOpen.value = true
+}
+
+const confirmDeleteCustomDay = async () => {
+  if (pendingDeleteId.value === null) return
+  await destroyMutation.mutateAsync(pendingDeleteId.value)
+  pendingDeleteId.value = null
   closePopover()
 }
 
@@ -142,6 +156,25 @@ const weekdayKeys = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const
         {{ t('calendar.customDay') }}
       </span>
     </div>
+
+    <AlertDialog :open="deleteDialogOpen" @update:open="deleteDialogOpen = $event">
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{{ t('calendar.delete.title') }}</AlertDialogTitle>
+          <AlertDialogDescription>{{ t('calendar.delete.description') }}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{{ t('calendar.delete.cancel') }}</AlertDialogCancel>
+          <AlertDialogAction
+            class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            :disabled="destroyMutation.isPending.value"
+            @click="confirmDeleteCustomDay"
+          >
+            {{ t('calendar.delete.confirm') }}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
 
     <!-- Calendar grid -->
     <div class="rounded-lg border overflow-hidden">
@@ -235,7 +268,7 @@ const weekdayKeys = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const
                       variant="ghost"
                       class="h-8 px-2 text-destructive hover:text-destructive"
                       :disabled="destroyMutation.isPending.value"
-                      @click="deleteCustomDay(editingId!)"
+                      @click="openDeleteDialog(editingId!)"
                     >
                       <X class="h-3.5 w-3.5" />
                     </Button>

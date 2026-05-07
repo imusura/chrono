@@ -21,7 +21,13 @@
     "addEntry": "Add entry"
   },
   "daySheet": {
-    "addEntry": "Add entry"
+    "addEntry": "Add entry",
+    "delete": {
+      "title": "Delete entry?",
+      "description": "This will permanently delete the \"{name}\" entry. This cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    }
   },
   "entryDialog": {
     "addEntry": "Add entry",
@@ -132,9 +138,39 @@
       "confirm": "Delete"
     }
   },
+  "invite": {
+    "dialog": {
+      "title": "Invite users",
+      "emails": "Email addresses",
+      "emailPlaceholder": "name{'@'}example.com",
+      "emailHint": "Press Enter or comma to add each address.",
+      "emailRequired": "Add at least one email address.",
+      "contractedHours": "Contracted hours / day (HH:MM)",
+      "role": "Role",
+      "admin": "Admin",
+      "send": "Send invitations",
+      "sending": "Sending...",
+      "successToast": "Invitation sent to {count} address | Invitations sent to {count} addresses",
+      "skippedToast": "{count} address already has an account | {count} addresses already have accounts"
+    },
+    "accept": {
+      "title": "Create your account",
+      "description": "You've been invited to join Chrono.",
+      "email": "Email",
+      "name": "Full name",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "submit": "Create account",
+      "submitting": "Creating account...",
+      "loading": "Checking invitation...",
+      "invalid": "This invitation is invalid or has expired.",
+      "invalidHint": "Ask your admin to send a new invitation."
+    }
+  },
   "users": {
     "description": "Staff members who log time in Chrono.",
     "newUser": "New user",
+    "invite": "Invite",
     "noUsers": "No users yet",
     "noUsersHint": "Add staff members so they can log their time.",
     "addFirst": "Add first user",
@@ -167,6 +203,12 @@
     "labelPlaceholder": "e.g. Company anniversary",
     "save": "Save",
     "syncHolidays": "Sync public holidays",
+    "delete": {
+      "title": "Delete non-working day?",
+      "description": "This will permanently remove this custom non-working day.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
     "weekdays": {
       "Mon": "Mon",
       "Tue": "Tue",

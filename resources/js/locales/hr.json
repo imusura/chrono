@@ -21,7 +21,13 @@
     "addEntry": "Dodaj unos"
   },
   "daySheet": {
-    "addEntry": "Dodaj unos"
+    "addEntry": "Dodaj unos",
+    "delete": {
+      "title": "Izbriši unos?",
+      "description": "Ovo će trajno izbrisati unos \"{name}\". Ova radnja se ne može poništiti.",
+      "cancel": "Odustani",
+      "confirm": "Izbriši"
+    }
   },
   "entryDialog": {
     "addEntry": "Dodaj unos",
@@ -132,9 +138,39 @@
       "confirm": "Izbriši"
     }
   },
+  "invite": {
+    "dialog": {
+      "title": "Pozovi korisnike",
+      "emails": "E-mail adrese",
+      "emailPlaceholder": "ime{'@'}primjer.com",
+      "emailHint": "Pritisnite Enter ili zarez za dodavanje svake adrese.",
+      "emailRequired": "Dodajte barem jednu e-mail adresu.",
+      "contractedHours": "Ugovoreni sati / dan (HH:MM)",
+      "role": "Uloga",
+      "admin": "Administrator",
+      "send": "Pošalji pozivnice",
+      "sending": "Slanje...",
+      "successToast": "Pozivnica poslana na {count} adresu | Pozivnice poslane na {count} adrese",
+      "skippedToast": "{count} adresa već ima račun | {count} adrese već imaju račun"
+    },
+    "accept": {
+      "title": "Kreiranje računa",
+      "description": "Pozvani ste za pridruživanje Chronu.",
+      "email": "E-pošta",
+      "name": "Puno ime",
+      "password": "Lozinka",
+      "confirmPassword": "Potvrda lozinke",
+      "submit": "Kreiraj račun",
+      "submitting": "Kreiranje...",
+      "loading": "Provjera pozivnice...",
+      "invalid": "Ova pozivnica je nevažeća ili je istekla.",
+      "invalidHint": "Zamolite administratora da pošalje novu pozivnicu."
+    }
+  },
   "users": {
     "description": "Zaposlenici koji bilježe radno vrijeme u Chronu.",
     "newUser": "Novi korisnik",
+    "invite": "Pozovi",
     "noUsers": "Nema korisnika",
     "noUsersHint": "Dodajte zaposlenike kako bi mogli bilježiti radno vrijeme.",
     "addFirst": "Dodaj prvog korisnika",
@@ -167,6 +203,12 @@
     "labelPlaceholder": "npr. Godišnjica tvrtke",
     "save": "Spremi",
     "syncHolidays": "Sinkroniziraj državne praznike",
+    "delete": {
+      "title": "Izbriši neradni dan?",
+      "description": "Ovo će trajno ukloniti ovaj prilagođeni neradni dan.",
+      "cancel": "Odustani",
+      "confirm": "Izbriši"
+    },
     "weekdays": {
       "Mon": "Pon",
       "Tue": "Uto",
