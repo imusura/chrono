@@ -51,7 +51,7 @@ class InvitationController extends Controller
             );
 
             $invitation = Invitation::where('organisation_id', $orgId)->where('email', $email)->first();
-            Mail::to($email)->queue(new InvitationMail($invitation));
+            Mail::to($email)->send(new InvitationMail($invitation));
             $sent[] = $email;
         }
 
