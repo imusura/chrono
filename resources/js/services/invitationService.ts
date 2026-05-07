@@ -6,6 +6,7 @@ export interface StoreInvitationPayload {
   role_ids: number[]
   contracted_hours: number
   is_admin: boolean
+  organisation_id?: number
 }
 
 export interface InvitationPreview {

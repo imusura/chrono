@@ -95,6 +95,7 @@ const submit = async () => {
       role_ids: selectedRoleIds.value,
       contracted_hours: hmToDecimalHours(contractedHoursHm.value),
       is_admin: isAdmin.value,
+      organisation_id: props.organisationId,
     })
 
     const sentCount = result.sent.length

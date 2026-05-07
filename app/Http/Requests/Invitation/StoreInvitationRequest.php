@@ -17,6 +17,7 @@ class StoreInvitationRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'organisation_id' => ['nullable', 'integer', 'exists:organisations,id'],
             'emails' => ['required', 'array', 'min:1'],
             'emails.*' => ['required', 'email', 'max:255'],
             'role_ids' => ['nullable', 'array'],
