@@ -5,10 +5,9 @@ import type { StoreTimeEntryPayload, TimeEntry, UpdateTimeEntryPayload } from '@
 
 export const useTimeEntries = (year: Ref<number>, month: Ref<number>) => {
   const queryClient = useQueryClient()
-  const queryKey = computed(() => ['time-entries', year.value, month.value])
 
   const query = useQuery({
-    queryKey,
+    queryKey: ['time-entries', year, month],
     queryFn: () => timeEntryService.getMonth(year.value, month.value),
   })
 

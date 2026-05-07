@@ -7,9 +7,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const email = ref('')
 const password = ref('')
@@ -37,13 +39,13 @@ const submit = async () => {
   <div class="flex min-h-screen items-center justify-center px-4 bg-gradient-to-br from-primary/5 via-background to-accent/30">
     <Card class="w-full max-w-sm shadow-lg border-t-4 border-t-primary">
       <CardHeader class="text-center">
-        <CardTitle class="text-2xl">Welcome back</CardTitle>
-        <CardDescription>Sign in to Chrono</CardDescription>
+        <CardTitle class="text-2xl">{{ t('auth.login.title') }}</CardTitle>
+        <CardDescription>{{ t('auth.login.description') }}</CardDescription>
       </CardHeader>
       <CardContent>
         <form @submit.prevent="submit" class="grid gap-4">
           <div class="grid gap-2">
-            <Label for="email">Email</Label>
+            <Label for="email">{{ t('auth.login.email') }}</Label>
             <Input
               id="email"
               v-model="email"
@@ -56,7 +58,7 @@ const submit = async () => {
           </div>
 
           <div class="grid gap-2">
-            <Label for="password">Password</Label>
+            <Label for="password">{{ t('auth.login.password') }}</Label>
             <Input
               id="password"
               v-model="password"
@@ -67,12 +69,12 @@ const submit = async () => {
           </div>
 
           <Button type="submit" class="w-full" :disabled="isLoading">
-            {{ isLoading ? 'Signing in...' : 'Sign in' }}
+            {{ isLoading ? t('auth.login.submitting') : t('auth.login.submit') }}
           </Button>
 
           <div class="text-center text-sm">
             <RouterLink :to="{ name: 'forgot-password' }" class="text-muted-foreground underline-offset-4 hover:underline">
-              Forgot your password?
+              {{ t('auth.login.forgotPassword') }}
             </RouterLink>
           </div>
         </form>

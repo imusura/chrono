@@ -7,7 +7,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const email = ref('')
 const errors = ref<Record<string, string[]>>({})
 const successMessage = ref('')
@@ -34,8 +36,8 @@ const submit = async () => {
   <div class="flex min-h-screen items-center justify-center px-4">
     <Card class="w-full max-w-sm">
       <CardHeader>
-        <CardTitle class="text-2xl">Forgot Password</CardTitle>
-        <CardDescription>Enter your email and we'll send you a reset link</CardDescription>
+        <CardTitle class="text-2xl">{{ t('auth.forgotPassword.title') }}</CardTitle>
+        <CardDescription>{{ t('auth.forgotPassword.description') }}</CardDescription>
       </CardHeader>
       <CardContent>
         <Alert v-if="successMessage" class="mb-4">
@@ -44,7 +46,7 @@ const submit = async () => {
 
         <form @submit.prevent="submit" class="grid gap-4">
           <div class="grid gap-2">
-            <Label for="email">Email</Label>
+            <Label for="email">{{ t('auth.forgotPassword.email') }}</Label>
             <Input
               id="email"
               v-model="email"
@@ -57,12 +59,12 @@ const submit = async () => {
           </div>
 
           <Button type="submit" class="w-full" :disabled="isLoading">
-            {{ isLoading ? 'Sending...' : 'Send Reset Link' }}
+            {{ isLoading ? t('auth.forgotPassword.submitting') : t('auth.forgotPassword.submit') }}
           </Button>
 
           <div class="text-center text-sm">
             <RouterLink :to="{ name: 'login' }" class="text-muted-foreground underline-offset-4 hover:underline">
-              Back to login
+              {{ t('auth.forgotPassword.backToLogin') }}
             </RouterLink>
           </div>
         </form>

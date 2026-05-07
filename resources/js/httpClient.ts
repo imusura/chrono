@@ -6,6 +6,12 @@ axios.defaults.baseURL = '/api'
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 axios.defaults.withCredentials = true
 
+axios.interceptors.request.use((config) => {
+  const locale = localStorage.getItem('app-locale') ?? 'hr'
+  config.headers['Accept-Language'] = locale
+  return config
+})
+
 axios.interceptors.response.use(
   (response) => response,
   (error) => {

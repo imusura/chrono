@@ -2,8 +2,10 @@ import api from '@/httpClient'
 import type { AdminUser, StoreUserPayload, UpdateUserPayload } from '@/types'
 
 export const userAdminService = {
-  getAll: async (): Promise<AdminUser[]> => {
-    const { data } = await api.get<{ data: AdminUser[] }>('/users')
+  getAll: async (organisationId?: number): Promise<AdminUser[]> => {
+    const { data } = await api.get<{ data: AdminUser[] }>('/users', {
+      params: organisationId ? { organisation_id: organisationId } : undefined,
+    })
     return data.data
   },
 

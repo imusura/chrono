@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { LogOut, Sun, Moon, Monitor } from 'lucide-vue-next'
+import { LogOut, Sun, Moon, Monitor, Languages } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import { useAppearanceStore } from '@/stores/appearance'
+import { useLocaleStore } from '@/stores/locale'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -15,10 +16,13 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const appearanceStore = useAppearanceStore()
+const localeStore = useLocaleStore()
+const { t } = useI18n()
 
 const handleLogout = async () => {
   await authStore.logout()
@@ -50,27 +54,41 @@ const handleLogout = async () => {
         <DropdownMenuSubTrigger>
           <Sun class="mr-2 size-4 dark:hidden" />
           <Moon class="mr-2 size-4 hidden dark:block" />
-          Theme
+          {{ t('userMenu.theme') }}
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent>
           <DropdownMenuItem @click="appearanceStore.theme = 'light'" :class="{ 'bg-accent': appearanceStore.theme === 'light' }">
             <Sun class="mr-2 size-4" />
-            Light
+            {{ t('userMenu.light') }}
           </DropdownMenuItem>
           <DropdownMenuItem @click="appearanceStore.theme = 'dark'" :class="{ 'bg-accent': appearanceStore.theme === 'dark' }">
             <Moon class="mr-2 size-4" />
-            Dark
+            {{ t('userMenu.dark') }}
           </DropdownMenuItem>
           <DropdownMenuItem @click="appearanceStore.theme = 'system'" :class="{ 'bg-accent': appearanceStore.theme === 'system' }">
             <Monitor class="mr-2 size-4" />
-            System
+            {{ t('userMenu.system') }}
+          </DropdownMenuItem>
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+          <Languages class="mr-2 size-4" />
+          {{ t('userMenu.language') }}
+        </DropdownMenuSubTrigger>
+        <DropdownMenuSubContent>
+          <DropdownMenuItem @click="localeStore.current = 'hr'" :class="{ 'bg-accent': localeStore.current === 'hr' }">
+            🇭🇷 Hrvatski
+          </DropdownMenuItem>
+          <DropdownMenuItem @click="localeStore.current = 'en'" :class="{ 'bg-accent': localeStore.current === 'en' }">
+            🇬🇧 English
           </DropdownMenuItem>
         </DropdownMenuSubContent>
       </DropdownMenuSub>
       <DropdownMenuSeparator />
       <DropdownMenuItem @click="handleLogout">
         <LogOut class="mr-2 size-4" />
-        Log out
+        {{ t('userMenu.logout') }}
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>

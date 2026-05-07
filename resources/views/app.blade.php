@@ -3,16 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'TickIt') }}</title>
+    <title>{{ config('app.name', 'Chrono') }}</title>
 
     <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" type="image/png" href="/pwa-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png">
     <link rel="manifest" href="/manifest.webmanifest">
     <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0a0a0f" media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="TickIt">
+    <meta name="apple-mobile-web-app-title" content="Chrono">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     @vite(['resources/css/app.css', 'resources/js/main.ts'])

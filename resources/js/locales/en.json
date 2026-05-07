@@ -1,0 +1,219 @@
+{
+  "nav": {
+    "myTime": "My Time",
+    "organisation": "Organisation",
+    "organisations": "Organisations"
+  },
+  "userMenu": {
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "language": "Language",
+    "logout": "Log out"
+  },
+  "time": {
+    "logged": "logged of",
+    "expected": "expected",
+    "over": "over",
+    "remaining": "remaining",
+    "noEntries": "No entries yet.",
+    "addEntry": "Add entry"
+  },
+  "daySheet": {
+    "addEntry": "Add entry"
+  },
+  "entryDialog": {
+    "addEntry": "Add entry",
+    "editEntry": "Edit entry",
+    "left": "left",
+    "activity": "Activity",
+    "noActivities": "No activities assigned to your role yet.",
+    "start": "Start",
+    "end": "End",
+    "duration": "Duration (minutes)",
+    "notes": "Notes",
+    "notesOptional": "(optional)",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "organisation": {
+    "title": "Organisation",
+    "viewing": "Viewing:",
+    "pickOrg": "Pick an organisation",
+    "selectOrgPrompt": "Select an organisation above to manage its data.",
+    "checklist": {
+      "intro": "Get started — complete these steps to set up your organisation:",
+      "createRoles": "Create roles (e.g. Teacher, Assistant)",
+      "createActivities": "Create activities (e.g. Classroom teaching, Planning)",
+      "addUsers": "Add staff members"
+    },
+    "tabs": {
+      "roles": "Roles",
+      "activities": "Activities",
+      "users": "Users",
+      "calendar": "Calendar"
+    }
+  },
+  "organisations": {
+    "title": "Organisations",
+    "newOrganisation": "New organisation",
+    "noOrganisations": "No organisations yet.",
+    "created": "Created",
+    "dialog": {
+      "new": "New organisation",
+      "edit": "Edit organisation",
+      "name": "Name",
+      "countryCode": "Country code (ISO 3166-1 alpha-2)",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "delete": {
+      "title": "Delete organisation?",
+      "description": "This will permanently delete {name} and all its data. This cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    }
+  },
+  "roles": {
+    "description": "Roles define what staff members do. Assign activities to each role.",
+    "newRole": "New role",
+    "noRoles": "No roles yet",
+    "noRolesHint": "Start by creating a role like \"Teacher\" or \"Assistant\".",
+    "createFirst": "Create first role",
+    "noActivities": "No activities assigned",
+    "activities": "Activities",
+    "dialog": {
+      "new": "New role",
+      "edit": "Edit role",
+      "name": "Name",
+      "color": "Color",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "activitiesDialog": {
+      "title": "Activities for {name}",
+      "noActivities": "No activities yet — create one below.",
+      "activityName": "Activity name",
+      "activityNamePlaceholder": "e.g. Classroom teaching",
+      "color": "Color",
+      "addActivity": "Add activity",
+      "newActivity": "New activity",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "delete": {
+      "title": "Delete role?",
+      "description": "This will permanently delete {name}. Users with this role will lose it.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    }
+  },
+  "activities": {
+    "description": "Activities are the tasks staff log time against. Assign them to roles from the Roles tab.",
+    "newActivity": "New activity",
+    "noActivities": "No activities yet",
+    "noActivitiesHint": "Create activities like \"Classroom teaching\" or \"Planning\".",
+    "createFirst": "Create first activity",
+    "inactive": "(inactive)",
+    "dialog": {
+      "new": "New activity",
+      "edit": "Edit activity",
+      "name": "Name",
+      "color": "Color",
+      "active": "Active",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "delete": {
+      "title": "Delete activity?",
+      "description": "This will permanently delete {name}. Existing time entries will keep their data.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    }
+  },
+  "users": {
+    "description": "Staff members who log time in Chrono.",
+    "newUser": "New user",
+    "noUsers": "No users yet",
+    "noUsersHint": "Add staff members so they can log their time.",
+    "addFirst": "Add first user",
+    "admin": "Admin",
+    "dialog": {
+      "new": "New user",
+      "edit": "Edit user",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "newPassword": "New password (leave blank to keep)",
+      "contractedHours": "Contracted hours / day (HH:MM)",
+      "role": "Role",
+      "admin": "Admin",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "delete": {
+      "title": "Remove user?",
+      "description": "This will permanently remove {name} from the organisation.",
+      "cancel": "Cancel",
+      "confirm": "Remove"
+    }
+  },
+  "calendar": {
+    "publicHoliday": "Public holiday",
+    "customDay": "Custom non-working day",
+    "addNonWorkingDay": "Add non-working day",
+    "label": "Label",
+    "labelPlaceholder": "e.g. Company anniversary",
+    "save": "Save",
+    "syncHolidays": "Sync public holidays",
+    "weekdays": {
+      "Mon": "Mon",
+      "Tue": "Tue",
+      "Wed": "Wed",
+      "Thu": "Thu",
+      "Fri": "Fri",
+      "Sat": "Sat",
+      "Sun": "Sun"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "description": "Sign in to Chrono",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "forgotPassword": "Forgot your password?"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "description": "Enter your email and we'll send you a reset link",
+      "email": "Email",
+      "submit": "Send Reset Link",
+      "submitting": "Sending...",
+      "backToLogin": "Back to login"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "description": "Enter your new password",
+      "email": "Email",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Reset Password",
+      "submitting": "Resetting...",
+      "backToLogin": "Back to login"
+    }
+  },
+  "colorPicker": {
+    "usedBy": "Used by: {name}"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "name": "Name"
+  }
+}

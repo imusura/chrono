@@ -8,9 +8,7 @@ const authStore = useAuthStore()
 
 <template>
   <Toaster position="top-right" :duration="5000" rich-colors close-button />
-  <template v-if="authStore.isReady">
-    <RouterView />
-  </template>
+  <RouterView v-if="authStore.isReady" />
   <div v-else class="flex min-h-screen items-center justify-center">
     <div class="text-muted-foreground">Loading...</div>
   </div>

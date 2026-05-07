@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import UserMenu from './UserMenu.vue'
+
+defineProps<{ fullBleed?: boolean }>()
 
 const route = useRoute()
 const auth = useAuthStore()
+const { t } = useI18n()
 </script>
 
 <template>
@@ -18,7 +22,7 @@ const auth = useAuthStore()
           class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
           :class="route.name === 'time' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'"
         >
-          My Time
+          {{ t('nav.myTime') }}
         </RouterLink>
 
         <RouterLink
@@ -27,7 +31,7 @@ const auth = useAuthStore()
           class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
           :class="route.name === 'admin.organisation' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'"
         >
-          Organisation
+          {{ t('nav.organisation') }}
         </RouterLink>
 
         <RouterLink
@@ -36,7 +40,7 @@ const auth = useAuthStore()
           class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
           :class="route.name === 'admin.organisations' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'"
         >
-          Organisations
+          {{ t('nav.organisations') }}
         </RouterLink>
       </nav>
 
@@ -45,7 +49,7 @@ const auth = useAuthStore()
       </div>
     </header>
 
-    <main class="flex-1 min-h-0 overflow-auto p-6">
+    <main :class="fullBleed ? 'flex-1 min-h-0 flex flex-col overflow-hidden' : 'flex-1 min-h-0 overflow-auto p-6'">
       <slot />
     </main>
   </div>

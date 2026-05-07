@@ -1,16 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { userAdminService } from '@/services/userAdminService'
+import type { MaybeRef } from 'vue'
 import type { StoreUserPayload, UpdateUserPayload } from '@/types'
 
-const QUERY_KEY = ['admin-users']
-
-export const useAdminUsers = () => {
+export const useAdminUsers = (organisationId?: MaybeRef<number | undefined>) => {
   const queryClient = useQueryClient()
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: QUERY_KEY })
+  const queryKey = ['admin-users', organisationId]
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['admin-users'] })
 
   const query = useQuery({
-    queryKey: QUERY_KEY,
-    queryFn: userAdminService.getAll,
+    queryKey,
+    queryFn: () => {
+      const id = typeof organisationId === 'object' ? organisationId.value : organisationId
+      return userAdminService.getAll(id)
+    },
   })
 
   const storeMutation = useMutation({

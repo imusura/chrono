@@ -1,0 +1,219 @@
+{
+  "nav": {
+    "myTime": "Moje vrijeme",
+    "organisation": "Organizacija",
+    "organisations": "Organizacije"
+  },
+  "userMenu": {
+    "theme": "Tema",
+    "light": "Svijetla",
+    "dark": "Tamna",
+    "system": "Sustav",
+    "language": "Jezik",
+    "logout": "Odjava"
+  },
+  "time": {
+    "logged": "uneseno od",
+    "expected": "očekivano",
+    "over": "više",
+    "remaining": "preostalo",
+    "noEntries": "Nema unosa.",
+    "addEntry": "Dodaj unos"
+  },
+  "daySheet": {
+    "addEntry": "Dodaj unos"
+  },
+  "entryDialog": {
+    "addEntry": "Dodaj unos",
+    "editEntry": "Uredi unos",
+    "left": "preostalo",
+    "activity": "Aktivnost",
+    "noActivities": "Nema aktivnosti dodijeljenih vašoj ulozi.",
+    "start": "Početak",
+    "end": "Kraj",
+    "duration": "Trajanje (minuta)",
+    "notes": "Bilješke",
+    "notesOptional": "(neobavezno)",
+    "cancel": "Odustani",
+    "save": "Spremi"
+  },
+  "organisation": {
+    "title": "Organizacija",
+    "viewing": "Pregled:",
+    "pickOrg": "Odaberi organizaciju",
+    "selectOrgPrompt": "Odaberi organizaciju gore za upravljanje podacima.",
+    "checklist": {
+      "intro": "Početak — dovršite ove korake za postavljanje vaše organizacije:",
+      "createRoles": "Kreirajte uloge (npr. Učitelj, Asistent)",
+      "createActivities": "Kreirajte aktivnosti (npr. Nastava, Planiranje)",
+      "addUsers": "Dodajte zaposlenike"
+    },
+    "tabs": {
+      "roles": "Uloge",
+      "activities": "Aktivnosti",
+      "users": "Korisnici",
+      "calendar": "Kalendar"
+    }
+  },
+  "organisations": {
+    "title": "Organizacije",
+    "newOrganisation": "Nova organizacija",
+    "noOrganisations": "Nema organizacija.",
+    "created": "Kreirano",
+    "dialog": {
+      "new": "Nova organizacija",
+      "edit": "Uredi organizaciju",
+      "name": "Naziv",
+      "countryCode": "Kod države (ISO 3166-1 alpha-2)",
+      "cancel": "Odustani",
+      "save": "Spremi"
+    },
+    "delete": {
+      "title": "Izbriši organizaciju?",
+      "description": "Ovo će trajno izbrisati {name} i sve njezine podatke. Ova radnja se ne može poništiti.",
+      "cancel": "Odustani",
+      "confirm": "Izbriši"
+    }
+  },
+  "roles": {
+    "description": "Uloge definiraju što zaposlenici rade. Dodijelite aktivnosti svakoj ulozi.",
+    "newRole": "Nova uloga",
+    "noRoles": "Nema uloga",
+    "noRolesHint": "Počnite kreiranjem uloge poput \"Učitelj\" ili \"Asistent\".",
+    "createFirst": "Kreiraj prvu ulogu",
+    "noActivities": "Nema dodijeljenih aktivnosti",
+    "activities": "Aktivnosti",
+    "dialog": {
+      "new": "Nova uloga",
+      "edit": "Uredi ulogu",
+      "name": "Naziv",
+      "color": "Boja",
+      "cancel": "Odustani",
+      "save": "Spremi"
+    },
+    "activitiesDialog": {
+      "title": "Aktivnosti za {name}",
+      "noActivities": "Nema aktivnosti — kreirajte jednu ispod.",
+      "activityName": "Naziv aktivnosti",
+      "activityNamePlaceholder": "npr. Nastava u razredu",
+      "color": "Boja",
+      "addActivity": "Dodaj aktivnost",
+      "newActivity": "Nova aktivnost",
+      "cancel": "Odustani",
+      "save": "Spremi"
+    },
+    "delete": {
+      "title": "Izbriši ulogu?",
+      "description": "Ovo će trajno izbrisati {name}. Korisnici s ovom ulogom izgubiti će je.",
+      "cancel": "Odustani",
+      "confirm": "Izbriši"
+    }
+  },
+  "activities": {
+    "description": "Aktivnosti su zadaci za koje zaposlenici bilježe vrijeme. Dodijelite ih ulogama u kartici Uloge.",
+    "newActivity": "Nova aktivnost",
+    "noActivities": "Nema aktivnosti",
+    "noActivitiesHint": "Kreirajte aktivnosti poput \"Nastava u razredu\" ili \"Planiranje\".",
+    "createFirst": "Kreiraj prvu aktivnost",
+    "inactive": "(neaktivno)",
+    "dialog": {
+      "new": "Nova aktivnost",
+      "edit": "Uredi aktivnost",
+      "name": "Naziv",
+      "color": "Boja",
+      "active": "Aktivno",
+      "cancel": "Odustani",
+      "save": "Spremi"
+    },
+    "delete": {
+      "title": "Izbriši aktivnost?",
+      "description": "Ovo će trajno izbrisati {name}. Postojeći vremenski unosi zadržat će svoje podatke.",
+      "cancel": "Odustani",
+      "confirm": "Izbriši"
+    }
+  },
+  "users": {
+    "description": "Zaposlenici koji bilježe radno vrijeme u Chronu.",
+    "newUser": "Novi korisnik",
+    "noUsers": "Nema korisnika",
+    "noUsersHint": "Dodajte zaposlenike kako bi mogli bilježiti radno vrijeme.",
+    "addFirst": "Dodaj prvog korisnika",
+    "admin": "Administrator",
+    "dialog": {
+      "new": "Novi korisnik",
+      "edit": "Uredi korisnika",
+      "name": "Ime",
+      "email": "E-pošta",
+      "password": "Lozinka",
+      "newPassword": "Nova lozinka (ostavite prazno za zadržavanje)",
+      "contractedHours": "Ugovoreni sati / dan (HH:MM)",
+      "role": "Uloga",
+      "admin": "Administrator",
+      "cancel": "Odustani",
+      "save": "Spremi"
+    },
+    "delete": {
+      "title": "Ukloni korisnika?",
+      "description": "Ovo će trajno ukloniti {name} iz organizacije.",
+      "cancel": "Odustani",
+      "confirm": "Ukloni"
+    }
+  },
+  "calendar": {
+    "publicHoliday": "Državni praznik",
+    "customDay": "Prilagođeni neradni dan",
+    "addNonWorkingDay": "Dodaj neradni dan",
+    "label": "Naziv",
+    "labelPlaceholder": "npr. Godišnjica tvrtke",
+    "save": "Spremi",
+    "syncHolidays": "Sinkroniziraj državne praznike",
+    "weekdays": {
+      "Mon": "Pon",
+      "Tue": "Uto",
+      "Wed": "Sri",
+      "Thu": "Čet",
+      "Fri": "Pet",
+      "Sat": "Sub",
+      "Sun": "Ned"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Dobrodošli",
+      "description": "Prijavite se u Chrono",
+      "email": "E-pošta",
+      "password": "Lozinka",
+      "submit": "Prijava",
+      "submitting": "Prijavljivanje...",
+      "forgotPassword": "Zaboravili ste lozinku?"
+    },
+    "forgotPassword": {
+      "title": "Zaboravljena lozinka",
+      "description": "Unesite svoju e-poštu i poslat ćemo vam poveznicu za resetiranje",
+      "email": "E-pošta",
+      "submit": "Pošalji poveznicu",
+      "submitting": "Slanje...",
+      "backToLogin": "Natrag na prijavu"
+    },
+    "resetPassword": {
+      "title": "Resetiranje lozinke",
+      "description": "Unesite novu lozinku",
+      "email": "E-pošta",
+      "newPassword": "Nova lozinka",
+      "confirmPassword": "Potvrda lozinke",
+      "submit": "Resetiraj lozinku",
+      "submitting": "Resetiranje...",
+      "backToLogin": "Natrag na prijavu"
+    }
+  },
+  "colorPicker": {
+    "usedBy": "Koristi: {name}"
+  },
+  "common": {
+    "cancel": "Odustani",
+    "save": "Spremi",
+    "delete": "Izbriši",
+    "edit": "Uredi",
+    "name": "Naziv"
+  }
+}

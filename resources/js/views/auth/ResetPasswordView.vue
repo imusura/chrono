@@ -8,8 +8,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
+const { t } = useI18n()
 
 const email = ref((route.query.email as string) ?? '')
 const password = ref('')
@@ -44,22 +46,22 @@ const submit = async () => {
   <div class="flex min-h-screen items-center justify-center px-4">
     <Card class="w-full max-w-sm">
       <CardHeader>
-        <CardTitle class="text-2xl">Reset Password</CardTitle>
-        <CardDescription>Enter your new password</CardDescription>
+        <CardTitle class="text-2xl">{{ t('auth.resetPassword.title') }}</CardTitle>
+        <CardDescription>{{ t('auth.resetPassword.description') }}</CardDescription>
       </CardHeader>
       <CardContent>
         <Alert v-if="successMessage" class="mb-4">
           <AlertDescription>
             {{ successMessage }}
             <RouterLink :to="{ name: 'login' }" class="underline underline-offset-4">
-              Back to login
+              {{ t('auth.resetPassword.backToLogin') }}
             </RouterLink>
           </AlertDescription>
         </Alert>
 
         <form @submit.prevent="submit" class="grid gap-4">
           <div class="grid gap-2">
-            <Label for="email">Email</Label>
+            <Label for="email">{{ t('auth.resetPassword.email') }}</Label>
             <Input
               id="email"
               v-model="email"
@@ -70,7 +72,7 @@ const submit = async () => {
           </div>
 
           <div class="grid gap-2">
-            <Label for="password">New Password</Label>
+            <Label for="password">{{ t('auth.resetPassword.newPassword') }}</Label>
             <Input
               id="password"
               v-model="password"
@@ -81,7 +83,7 @@ const submit = async () => {
           </div>
 
           <div class="grid gap-2">
-            <Label for="password-confirmation">Confirm Password</Label>
+            <Label for="password-confirmation">{{ t('auth.resetPassword.confirmPassword') }}</Label>
             <Input
               id="password-confirmation"
               v-model="passwordConfirmation"
@@ -91,12 +93,12 @@ const submit = async () => {
           </div>
 
           <Button type="submit" class="w-full" :disabled="isLoading">
-            {{ isLoading ? 'Resetting...' : 'Reset Password' }}
+            {{ isLoading ? t('auth.resetPassword.submitting') : t('auth.resetPassword.submit') }}
           </Button>
 
           <div class="text-center text-sm">
             <RouterLink :to="{ name: 'login' }" class="text-muted-foreground underline-offset-4 hover:underline">
-              Back to login
+              {{ t('auth.resetPassword.backToLogin') }}
             </RouterLink>
           </div>
         </form>
