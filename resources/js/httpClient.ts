@@ -31,6 +31,10 @@ axios.interceptors.response.use(
       return Promise.reject(error)
     }
 
+    if (status === 401) {
+      return Promise.reject(error)
+    }
+
     if (status === 419) {
       toast.error('Session expired. Please refresh the page.')
       return Promise.reject(error)

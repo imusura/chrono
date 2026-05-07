@@ -43,6 +43,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/auth/ResetPasswordView.vue'),
     meta: { guest: true },
   },
+  {
+    path: '/accept-invite/:token',
+    name: 'accept-invite',
+    component: () => import('@/views/auth/AcceptInviteView.vue'),
+    meta: { guest: true },
+  },
 ]
 
 const router = createRouter({

@@ -23,9 +23,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Pencil, Trash2, Plus } from 'lucide-vue-next'
+import { Pencil, Trash2, Plus, Mail } from 'lucide-vue-next'
 import { useAdminUsers } from '@/composables/useAdminUsers'
 import { useAdminRoles } from '@/composables/useAdminRoles'
+import InviteDialog from '@/components/admin/InviteDialog.vue'
 import { decimalHoursToHm, hmToDecimalHours } from '@/lib/format'
 import type { AdminUser } from '@/types'
 import { useI18n } from 'vue-i18n'
@@ -51,6 +52,7 @@ const errors = ref<Record<string, string>>({})
 
 const deleteDialogOpen = ref(false)
 const deleting = ref<AdminUser | null>(null)
+const inviteDialogOpen = ref(false)
 
 const openCreate = () => {
   editing.value = null
@@ -140,10 +142,16 @@ const roleColor = (id: number) => rolesQuery.data.value?.find((r) => r.id === id
   <div>
     <div class="flex items-center justify-between mb-4">
       <p class="text-sm text-muted-foreground">{{ t('users.description') }}</p>
-      <Button size="sm" @click="openCreate">
-        <Plus class="h-4 w-4 mr-1" />
-        {{ t('users.newUser') }}
-      </Button>
+      <div class="flex gap-2">
+        <Button size="sm" variant="outline" @click="inviteDialogOpen = true">
+          <Mail class="h-4 w-4 mr-1" />
+          {{ t('users.invite') }}
+        </Button>
+        <Button size="sm" @click="openCreate">
+          <Plus class="h-4 w-4 mr-1" />
+          {{ t('users.newUser') }}
+        </Button>
+      </div>
     </div>
 
     <div v-if="query.isLoading.value" class="space-y-2">
@@ -254,6 +262,12 @@ const roleColor = (id: number) => rolesQuery.data.value?.find((r) => r.id === id
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
+    <InviteDialog
+      :open="inviteDialogOpen"
+      :organisation-id="props.organisationId"
+      @update:open="inviteDialogOpen = $event"
+    />
 
     <AlertDialog :open="deleteDialogOpen" @update:open="deleteDialogOpen = $event">
       <AlertDialogContent>

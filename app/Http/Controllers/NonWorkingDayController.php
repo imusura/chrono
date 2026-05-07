@@ -95,16 +95,23 @@ class NonWorkingDayController extends Controller
             return response()->json(['message' => "Failed to fetch holidays: HTTP {$response->status()}"], 502);
         }
 
-        $synced = 0;
-        foreach ($response->json() as $holiday) {
-            NonWorkingDay::updateOrCreate(
-                ['organisation_id' => null, 'country_code' => $countryCode, 'date' => $holiday['date']],
-                ['name' => $holiday['localName']],
-            );
-            $synced++;
+        $holidays = $response->json();
+
+        NonWorkingDay::whereNull('organisation_id')
+            ->where('country_code', $countryCode)
+            ->whereYear('date', $year)
+            ->delete();
+
+        foreach ($holidays as $holiday) {
+            NonWorkingDay::create([
+                'organisation_id' => null,
+                'country_code' => $countryCode,
+                'date' => $holiday['date'],
+                'name' => $holiday['localName'],
+            ]);
         }
 
-        return response()->json(['synced' => $synced]);
+        return response()->json(['synced' => count($holidays)]);
     }
 
     private function authorizeNonPublic(Request $request, ?int $orgId): void
