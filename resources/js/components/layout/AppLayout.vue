@@ -7,7 +7,7 @@ defineProps<{ fullBleed?: boolean }>()
 <template>
   <div class="min-h-screen flex flex-col">
     <header class="h-14 shrink-0 border-b bg-card/80 backdrop-blur-sm flex items-center px-6">
-      <span class="font-semibold text-sm">Chrono</span>
+      <RouterLink :to="{ name: 'time' }" class="font-semibold text-sm">Chrono</RouterLink>
       <div class="ml-auto">
         <UserMenu />
       </div>
