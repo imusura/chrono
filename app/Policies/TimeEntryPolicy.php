@@ -11,4 +11,9 @@ class TimeEntryPolicy
     {
         return $timeEntry->user_id === $user->id;
     }
+
+    public function delete(User $user, TimeEntry $timeEntry): bool
+    {
+        return $timeEntry->user_id === $user->id;
+    }
 }

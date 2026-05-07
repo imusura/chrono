@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->statefulApi();
+        $middleware->append(\App\Http\Middleware\SetLocale::class);
         $middleware->alias([
             'super_admin' => SuperAdmin::class,
             'admin' => \App\Http\Middleware\Admin::class,

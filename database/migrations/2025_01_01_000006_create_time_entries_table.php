@@ -13,8 +13,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('activity_id')->constrained()->restrictOnDelete();
             $table->date('date');
-            $table->time('started_at');
-            $table->time('ended_at');
+            $table->time('started_at')->nullable();
+            $table->time('ended_at')->nullable();
+            $table->unsignedSmallInteger('duration_minutes');
             $table->text('notes')->nullable();
             $table->timestamps();
 

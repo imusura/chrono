@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['user_id', 'activity_id', 'date', 'started_at', 'ended_at', 'notes'])]
+#[Fillable(['user_id', 'activity_id', 'date', 'started_at', 'ended_at', 'duration_minutes', 'notes'])]
 class TimeEntry extends Model
 {
     protected function casts(): array
