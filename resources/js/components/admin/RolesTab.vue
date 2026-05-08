@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Separator } from '@/components/ui/separator'
 import {
   Dialog,
   DialogContent,
@@ -24,7 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Pencil, Trash2, Plus, Layers } from 'lucide-vue-next'
+import { Pencil, Trash2, Plus } from 'lucide-vue-next'
 import { useAdminRoles } from '@/composables/useAdminRoles'
 import { useAdminActivities } from '@/composables/useAdminActivities'
 import ColorPicker from '@/components/admin/ColorPicker.vue'
@@ -41,6 +40,76 @@ const queryClient = useQueryClient()
 const { query, storeMutation, updateMutation, destroyMutation } = useAdminRoles(orgIdRef)
 const { query: activitiesQuery, storeMutation: storeActivity, updateMutation: updateActivity } = useAdminActivities(orgIdRef)
 
+// --- Selected role (right panel) ---
+const selectedRoleId = ref<number | null>(null)
+const selectedRole = computed(() => query.data.value?.find((r) => r.id === selectedRoleId.value) ?? null)
+
+watch(() => query.data.value, (roles) => {
+  if (!roles) return
+  if (selectedRoleId.value && !roles.find((r) => r.id === selectedRoleId.value)) {
+    selectedRoleId.value = roles[0]?.id ?? null
+  }
+  if (selectedRoleId.value === null && roles.length) {
+    selectedRoleId.value = roles[0].id
+  }
+}, { immediate: true })
+
+// Per-activity saving state to show spinner on the checkbox being toggled
+const savingActivityIds = ref<Set<number>>(new Set())
+
+const toggleActivity = async (activityId: number, checked: boolean) => {
+  if (!selectedRole.value) return
+  const role = selectedRole.value
+  const activity = activitiesQuery.data.value?.find((a) => a.id === activityId)
+  if (!activity) return
+
+  savingActivityIds.value = new Set([...savingActivityIds.value, activityId])
+  const newRoleIds = checked
+    ? [...activity.role_ids, role.id]
+    : activity.role_ids.filter((id) => id !== role.id)
+  try {
+    await updateActivity.mutateAsync({
+      id: activityId,
+      payload: { name: activity.name, color: activity.color, is_active: activity.is_active, role_ids: newRoleIds },
+    })
+    await queryClient.invalidateQueries({ queryKey: ['admin-roles'] })
+  } finally {
+    savingActivityIds.value = new Set([...savingActivityIds.value].filter((id) => id !== activityId))
+  }
+}
+
+// --- New activity inline form ---
+const showNewActivityForm = ref(false)
+const newActivityName = ref('')
+const newActivityColor = ref('#10b981')
+const newActivityError = ref('')
+const newActivityPending = ref(false)
+
+const submitNewActivity = async () => {
+  if (!selectedRole.value || !newActivityName.value.trim()) return
+  newActivityError.value = ''
+  newActivityPending.value = true
+  try {
+    await storeActivity.mutateAsync({
+      name: newActivityName.value.trim(),
+      color: newActivityColor.value,
+      is_active: true,
+      role_ids: [selectedRole.value.id],
+      ...(props.organisationId ? { organisation_id: props.organisationId } : {}),
+    })
+    showNewActivityForm.value = false
+    newActivityName.value = ''
+    newActivityColor.value = '#10b981'
+    await queryClient.invalidateQueries({ queryKey: ['admin-roles'] })
+  } catch (e: unknown) {
+    const err = e as { errors?: Record<string, string[]> }
+    if (err?.errors?.name) newActivityError.value = err.errors.name[0]
+  } finally {
+    newActivityPending.value = false
+  }
+}
+
+// --- Role create/edit dialog ---
 const roleDialogOpen = ref(false)
 const editingRole = ref<Role | null>(null)
 const roleName = ref('')
@@ -73,11 +142,12 @@ const submitRole = async () => {
     if (editingRole.value) {
       await updateMutation.mutateAsync({ id: editingRole.value.id, payload: { name: roleName.value, color: roleColor.value } })
     } else {
-      await storeMutation.mutateAsync({
+      const created = await storeMutation.mutateAsync({
         name: roleName.value,
         color: roleColor.value,
         ...(props.organisationId ? { organisation_id: props.organisationId } : {}),
       })
+      selectedRoleId.value = created.id
     }
     roleDialogOpen.value = false
   } catch (e: unknown) {
@@ -86,6 +156,7 @@ const submitRole = async () => {
   }
 }
 
+// --- Delete dialog ---
 const deleteDialogOpen = ref(false)
 const deleting = ref<Role | null>(null)
 
@@ -96,92 +167,14 @@ const openDelete = (role: Role) => {
 
 const confirmDelete = async () => {
   if (!deleting.value) return
-  await destroyMutation.mutateAsync(deleting.value.id)
+  const deletedId = deleting.value.id
+  await destroyMutation.mutateAsync(deletedId)
   deleteDialogOpen.value = false
   deleting.value = null
+  if (selectedRoleId.value === deletedId) selectedRoleId.value = null
 }
 
-const activitiesDialogOpen = ref(false)
-const managingRole = ref<Role | null>(null)
-const selectedActivityIds = ref<number[]>([])
-
-const showNewActivityForm = ref(false)
-const newActivityName = ref('')
-const newActivityColor = ref('#10b981')
-const newActivityError = ref('')
-const newActivityPending = ref(false)
-
-const openManageActivities = (role: Role) => {
-  managingRole.value = role
-  selectedActivityIds.value = [...role.activity_ids]
-  showNewActivityForm.value = false
-  newActivityName.value = ''
-  newActivityColor.value = '#10b981'
-  newActivityError.value = ''
-  activitiesDialogOpen.value = true
-}
-
-watch(activitiesDialogOpen, (open) => {
-  if (!open) {
-    showNewActivityForm.value = false
-    newActivityError.value = ''
-  }
-})
-
-const submitActivities = async () => {
-  if (!managingRole.value) return
-
-  const role = managingRole.value
-  const all = activitiesQuery.data.value ?? []
-  await Promise.all(
-    all.map((activity) => {
-      const shouldHave = selectedActivityIds.value.includes(activity.id)
-      const hasNow = activity.role_ids.includes(role.id)
-      if (shouldHave === hasNow) return Promise.resolve()
-      const newRoleIds = shouldHave
-        ? [...activity.role_ids, role.id]
-        : activity.role_ids.filter((id) => id !== role.id)
-      return updateActivity.mutateAsync({
-        id: activity.id,
-        payload: { name: activity.name, color: activity.color, is_active: activity.is_active, role_ids: newRoleIds },
-      })
-    }),
-  )
-
-  await queryClient.invalidateQueries({ queryKey: ['admin-roles'] })
-  activitiesDialogOpen.value = false
-}
-
-const submitNewActivity = async () => {
-  if (!managingRole.value || !newActivityName.value.trim()) return
-  newActivityError.value = ''
-  newActivityPending.value = true
-  try {
-    const created = await storeActivity.mutateAsync({
-      name: newActivityName.value.trim(),
-      color: newActivityColor.value,
-      is_active: true,
-      role_ids: [managingRole.value.id],
-      ...(props.organisationId ? { organisation_id: props.organisationId } : {}),
-    })
-    selectedActivityIds.value.push(created.id)
-    showNewActivityForm.value = false
-    newActivityName.value = ''
-    newActivityColor.value = '#10b981'
-  } catch (e: unknown) {
-    const err = e as { errors?: Record<string, string[]> }
-    if (err?.errors?.name) newActivityError.value = err.errors.name[0]
-  } finally {
-    newActivityPending.value = false
-  }
-}
-
-const activityName = (id: number) =>
-  activitiesQuery.data.value?.find((a) => a.id === id)?.name ?? ''
-
-const activityColor = (id: number) =>
-  activitiesQuery.data.value?.find((a) => a.id === id)?.color ?? '#888'
-
+// --- Color helpers ---
 const usedRoleColors = computed(() =>
   (query.data.value ?? [])
     .filter((r) => r.id !== editingRole.value?.id)
@@ -203,10 +196,12 @@ const usedActivityColors = computed(() =>
       </Button>
     </div>
 
+    <!-- Loading -->
     <div v-if="query.isLoading.value" class="space-y-2">
-      <Skeleton v-for="i in 3" :key="i" class="h-16 w-full rounded-lg" />
+      <Skeleton v-for="i in 3" :key="i" class="h-12 w-full rounded-lg" />
     </div>
 
+    <!-- Empty -->
     <div v-else-if="!query.data.value?.length" class="rounded-lg border border-dashed px-4 py-10 text-center">
       <p class="text-sm font-medium mb-1">{{ t('roles.noRoles') }}</p>
       <p class="text-xs text-muted-foreground mb-4">{{ t('roles.noRolesHint') }}</p>
@@ -216,41 +211,111 @@ const usedActivityColors = computed(() =>
       </Button>
     </div>
 
-    <div v-else class="rounded-lg border divide-y">
-      <div
-        v-for="role in query.data.value"
-        :key="role.id"
-        class="px-4 py-3"
-      >
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <span class="h-4 w-4 rounded-full shrink-0" :style="{ backgroundColor: role.color }" />
-            <span class="text-sm font-medium">{{ role.name }}</span>
+    <!-- Split panel -->
+    <div v-else class="grid grid-cols-5 gap-4 min-h-64">
+      <!-- Left: role list -->
+      <div class="col-span-2 rounded-lg border divide-y overflow-hidden">
+        <button
+          v-for="role in query.data.value"
+          :key="role.id"
+          type="button"
+          class="w-full flex items-center justify-between px-4 py-3 text-left transition-colors hover:bg-muted/50"
+          :class="selectedRoleId === role.id ? 'bg-muted' : ''"
+          @click="selectedRoleId = role.id"
+        >
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="h-3.5 w-3.5 rounded-full shrink-0" :style="{ backgroundColor: role.color }" />
+            <span class="text-sm font-medium truncate">{{ role.name }}</span>
+            <span class="text-xs text-muted-foreground shrink-0">{{ role.activity_ids.length }}</span>
           </div>
-          <div class="flex gap-1">
-            <Button variant="ghost" size="sm" class="text-muted-foreground gap-1.5" @click="openManageActivities(role)">
-              <Layers class="h-3.5 w-3.5" />
-              {{ t('roles.activities') }}
+          <div class="flex gap-0.5 shrink-0 ml-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              class="h-7 w-7"
+              @click.stop="openEditRole(role)"
+            >
+              <Pencil class="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" @click="openEditRole(role)">
-              <Pencil class="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" class="text-destructive hover:text-destructive" @click="openDelete(role)">
-              <Trash2 class="h-4 w-4" />
+            <Button
+              variant="ghost"
+              size="icon"
+              class="h-7 w-7 text-destructive hover:text-destructive"
+              @click.stop="openDelete(role)"
+            >
+              <Trash2 class="h-3.5 w-3.5" />
             </Button>
           </div>
-        </div>
-        <div v-if="role.activity_ids.length" class="mt-2 flex flex-wrap gap-1.5 pl-7">
-          <span
-            v-for="id in role.activity_ids"
-            :key="id"
-            class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium text-white"
-            :style="{ backgroundColor: activityColor(id) }"
-          >
-            {{ activityName(id) }}
-          </span>
-        </div>
-        <p v-else class="mt-1.5 pl-7 text-xs text-muted-foreground">{{ t('roles.noActivities') }}</p>
+        </button>
+      </div>
+
+      <!-- Right: activities panel -->
+      <div class="col-span-3 rounded-lg border p-4 flex flex-col gap-4">
+        <template v-if="selectedRole">
+          <div class="flex items-center gap-2">
+            <span class="h-3.5 w-3.5 rounded-full shrink-0" :style="{ backgroundColor: selectedRole.color }" />
+            <p class="text-sm font-medium">{{ selectedRole.name }}</p>
+            <span class="text-xs text-muted-foreground">{{ t('roles.activities') }}</span>
+          </div>
+
+          <div v-if="activitiesQuery.isLoading.value" class="space-y-2">
+            <Skeleton v-for="i in 4" :key="i" class="h-7 w-full rounded" />
+          </div>
+
+          <div v-else-if="activitiesQuery.data.value?.length" class="grid grid-cols-2 gap-x-6 gap-y-2">
+            <div
+              v-for="activity in activitiesQuery.data.value"
+              :key="activity.id"
+              class="flex items-center gap-2"
+            >
+              <Checkbox
+                :id="`act-${activity.id}`"
+                :model-value="selectedRole!.activity_ids.includes(activity.id)"
+                :disabled="savingActivityIds.has(activity.id)"
+                @update:model-value="(v) => toggleActivity(activity.id, !!v)"
+              />
+              <Label :for="`act-${activity.id}`" class="cursor-pointer flex items-center gap-2 text-sm">
+                <span class="h-3 w-3 rounded-full shrink-0" :style="{ backgroundColor: activity.color }" />
+                {{ activity.name }}
+              </Label>
+            </div>
+          </div>
+
+          <p v-else class="text-sm text-muted-foreground">{{ t('roles.activitiesDialog.noActivities') }}</p>
+
+          <!-- New activity inline form -->
+          <div v-if="showNewActivityForm" class="rounded-md border p-3 grid gap-3">
+            <div class="grid gap-1.5">
+              <Label for="new-act-name">{{ t('roles.activitiesDialog.activityName') }}</Label>
+              <Input
+                id="new-act-name"
+                v-model="newActivityName"
+                :placeholder="t('roles.activitiesDialog.activityNamePlaceholder')"
+                @keydown.enter="submitNewActivity"
+              />
+              <p v-if="newActivityError" class="text-sm text-destructive">{{ newActivityError }}</p>
+            </div>
+            <div class="grid gap-1.5">
+              <Label>{{ t('roles.activitiesDialog.color') }}</Label>
+              <ColorPicker v-model="newActivityColor" :used-colors="usedActivityColors" />
+            </div>
+            <div class="flex gap-2">
+              <Button size="sm" :disabled="newActivityPending || !newActivityName.trim()" @click="submitNewActivity">
+                {{ t('roles.activitiesDialog.addActivity') }}
+              </Button>
+              <Button size="sm" variant="ghost" @click="showNewActivityForm = false; newActivityName = ''; newActivityError = ''">
+                {{ t('roles.activitiesDialog.cancel') }}
+              </Button>
+            </div>
+          </div>
+
+          <div class="mt-auto pt-2 border-t">
+            <Button variant="outline" size="sm" @click="showNewActivityForm = true; newActivityError = ''">
+              <Plus class="h-4 w-4 mr-1" />
+              {{ t('roles.activitiesDialog.newActivity') }}
+            </Button>
+          </div>
+        </template>
       </div>
     </div>
 
@@ -275,68 +340,6 @@ const usedActivityColors = computed(() =>
           <Button variant="outline" @click="roleDialogOpen = false">{{ t('roles.dialog.cancel') }}</Button>
           <Button :disabled="storeMutation.isPending.value || updateMutation.isPending.value" @click="submitRole">
             {{ t('roles.dialog.save') }}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-
-    <!-- Manage activities dialog -->
-    <Dialog :open="activitiesDialogOpen" @update:open="activitiesDialogOpen = $event">
-      <DialogContent class="sm:max-w-sm">
-        <DialogHeader>
-          <DialogTitle>{{ t('roles.activitiesDialog.title', { name: managingRole?.name }) }}</DialogTitle>
-        </DialogHeader>
-
-        <div class="grid gap-3 py-2">
-          <div v-if="activitiesQuery.data.value?.length" class="space-y-2">
-            <div
-              v-for="activity in activitiesQuery.data.value"
-              :key="activity.id"
-              class="flex items-center gap-2"
-            >
-              <Checkbox
-                :id="`act-${activity.id}`"
-                :model-value="selectedActivityIds.includes(activity.id)"
-                @update:model-value="(v) => v ? selectedActivityIds.push(activity.id) : selectedActivityIds.splice(selectedActivityIds.indexOf(activity.id), 1)"
-              />
-              <Label :for="`act-${activity.id}`" class="cursor-pointer flex items-center gap-2">
-                <span class="h-3 w-3 rounded-full shrink-0" :style="{ backgroundColor: activity.color }" />
-                {{ activity.name }}
-              </Label>
-            </div>
-          </div>
-          <p v-else class="text-sm text-muted-foreground">{{ t('roles.activitiesDialog.noActivities') }}</p>
-
-          <Separator />
-
-          <div v-if="showNewActivityForm" class="grid gap-3">
-            <div class="grid gap-1.5">
-              <Label for="new-act-name">{{ t('roles.activitiesDialog.activityName') }}</Label>
-              <Input id="new-act-name" v-model="newActivityName" :placeholder="t('roles.activitiesDialog.activityNamePlaceholder')" @keydown.enter="submitNewActivity" />
-              <p v-if="newActivityError" class="text-sm text-destructive">{{ newActivityError }}</p>
-            </div>
-            <div class="grid gap-1.5">
-              <Label>{{ t('roles.activitiesDialog.color') }}</Label>
-              <ColorPicker v-model="newActivityColor" :used-colors="usedActivityColors" />
-            </div>
-            <div class="flex gap-2">
-              <Button size="sm" :disabled="newActivityPending || !newActivityName.trim()" @click="submitNewActivity">
-                {{ t('roles.activitiesDialog.addActivity') }}
-              </Button>
-              <Button size="sm" variant="ghost" @click="showNewActivityForm = false">{{ t('roles.activitiesDialog.cancel') }}</Button>
-            </div>
-          </div>
-
-          <Button v-else variant="outline" size="sm" class="w-full" @click="showNewActivityForm = true">
-            <Plus class="h-4 w-4 mr-1" />
-            {{ t('roles.activitiesDialog.newActivity') }}
-          </Button>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" @click="activitiesDialogOpen = false">{{ t('roles.activitiesDialog.cancel') }}</Button>
-          <Button :disabled="updateActivity.isPending.value" @click="submitActivities">
-            {{ t('roles.activitiesDialog.save') }}
           </Button>
         </DialogFooter>
       </DialogContent>

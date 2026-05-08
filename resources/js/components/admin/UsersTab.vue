@@ -23,13 +23,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Pencil, Trash2, Plus, Mail } from 'lucide-vue-next'
+import { Pencil, Trash2, Plus, Mail, Search, ShieldCheck, Clock } from 'lucide-vue-next'
 import { useAdminUsers } from '@/composables/useAdminUsers'
 import { useAdminRoles } from '@/composables/useAdminRoles'
+import { useAdminInvitations } from '@/composables/useAdminInvitations'
 import InviteDialog from '@/components/admin/InviteDialog.vue'
 import { decimalHoursToHm, hmToDecimalHours } from '@/lib/format'
-import type { AdminUser } from '@/types'
+import type { AdminUser, PendingInvitation } from '@/types'
 import { useI18n } from 'vue-i18n'
+
+type UserRow = { kind: 'user'; data: AdminUser }
+type InviteRow = { kind: 'invite'; data: PendingInvitation }
 
 const props = defineProps<{
   organisationId?: number
@@ -39,6 +43,7 @@ const { t } = useI18n()
 const orgIdRef = computed(() => props.organisationId)
 const { query, storeMutation, updateMutation, destroyMutation } = useAdminUsers(orgIdRef)
 const { query: rolesQuery } = useAdminRoles(orgIdRef)
+const { query: invitationsQuery, destroyMutation: revokeInvitation } = useAdminInvitations(orgIdRef)
 
 const dialogOpen = ref(false)
 const editing = ref<AdminUser | null>(null)
@@ -132,17 +137,39 @@ const confirmDelete = async () => {
   deleting.value = null
 }
 
-const formatHours = (h: number) => `${decimalHoursToHm(h)}h/day`
-
 const roleName = (id: number) => rolesQuery.data.value?.find((r) => r.id === id)?.name ?? ''
 const roleColor = (id: number) => rolesQuery.data.value?.find((r) => r.id === id)?.color ?? '#888'
+
+const search = ref('')
+
+const rows = computed<(UserRow | InviteRow)[]>(() => {
+  const q = search.value.trim().toLowerCase()
+  const users: UserRow[] = (query.data.value ?? [])
+    .filter((u) => !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q))
+    .map((u) => ({ kind: 'user', data: u }))
+  const invites: InviteRow[] = (invitationsQuery.data.value ?? [])
+    .filter((i) => !q || i.email.toLowerCase().includes(q))
+    .map((i) => ({ kind: 'invite', data: i }))
+  return [...users, ...invites].sort((a, b) => {
+    const nameA = a.kind === 'user' ? a.data.name : a.data.email
+    const nameB = b.kind === 'user' ? b.data.name : b.data.email
+    return nameA.localeCompare(nameB)
+  })
+})
+
+const hasData = computed(() => (query.data.value?.length ?? 0) + (invitationsQuery.data.value?.length ?? 0) > 0)
+const isLoading = computed(() => query.isLoading.value || invitationsQuery.isLoading.value)
 </script>
 
 <template>
   <div>
-    <div class="flex items-center justify-between mb-4">
-      <p class="text-sm text-muted-foreground">{{ t('users.description') }}</p>
-      <div class="flex gap-2">
+    <div class="flex items-center gap-3 mb-4">
+      <p class="text-sm text-muted-foreground shrink-0">{{ t('users.description') }}</p>
+      <div class="relative flex-1">
+        <Search class="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+        <Input v-model="search" class="pl-8 h-8 text-sm" :placeholder="t('users.search')" />
+      </div>
+      <div class="flex gap-2 shrink-0">
         <Button size="sm" variant="outline" @click="inviteDialogOpen = true">
           <Mail class="h-4 w-4 mr-1" />
           {{ t('users.invite') }}
@@ -154,11 +181,11 @@ const roleColor = (id: number) => rolesQuery.data.value?.find((r) => r.id === id
       </div>
     </div>
 
-    <div v-if="query.isLoading.value" class="space-y-2">
-      <Skeleton v-for="i in 3" :key="i" class="h-12 w-full rounded-lg" />
+    <div v-if="isLoading" class="space-y-2">
+      <Skeleton v-for="i in 3" :key="i" class="h-10 w-full rounded-lg" />
     </div>
 
-    <div v-else-if="!query.data.value?.length" class="rounded-lg border border-dashed px-4 py-10 text-center">
+    <div v-else-if="!hasData" class="rounded-lg border border-dashed px-4 py-10 text-center">
       <p class="text-sm font-medium mb-1">{{ t('users.noUsers') }}</p>
       <p class="text-xs text-muted-foreground mb-4">{{ t('users.noUsersHint') }}</p>
       <Button size="sm" @click="openCreate">
@@ -167,40 +194,110 @@ const roleColor = (id: number) => rolesQuery.data.value?.find((r) => r.id === id
       </Button>
     </div>
 
-    <div v-else class="rounded-lg border divide-y">
-      <div
-        v-for="user in query.data.value"
-        :key="user.id"
-        class="px-4 py-3"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium">{{ user.name }}</p>
-            <p class="text-xs text-muted-foreground">
-              {{ user.email }} &middot; {{ decimalHoursToHm(user.contracted_hours) }}h/day
-              <span v-if="user.is_admin"> &middot; {{ t('users.admin') }}</span>
-            </p>
-          </div>
-          <div class="flex gap-1">
-            <Button variant="ghost" size="icon" @click="openEdit(user)">
-              <Pencil class="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" class="text-destructive hover:text-destructive" @click="openDelete(user)">
-              <Trash2 class="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-        <div v-if="user.role_ids.length" class="mt-2 flex flex-wrap gap-1.5">
-          <span
-            v-for="id in user.role_ids"
-            :key="id"
-            class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium text-white"
-            :style="{ backgroundColor: roleColor(id) }"
-          >
-            {{ roleName(id) }}
-          </span>
-        </div>
-      </div>
+    <div v-else-if="!rows.length" class="rounded-lg border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
+      {{ t('users.noResults') }}
+    </div>
+
+    <div v-else class="rounded-lg border overflow-hidden">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b bg-muted/40">
+            <th class="px-4 py-2.5 text-left font-medium text-muted-foreground">{{ t('users.table.name') }}</th>
+            <th class="px-4 py-2.5 text-left font-medium text-muted-foreground">{{ t('users.table.role') }}</th>
+            <th class="px-4 py-2.5 text-left font-medium text-muted-foreground w-24">{{ t('users.table.hours') }}</th>
+            <th class="px-4 py-2.5 text-left font-medium text-muted-foreground w-32">{{ t('users.table.status') }}</th>
+            <th class="px-4 py-2.5 w-20" />
+          </tr>
+        </thead>
+        <tbody class="divide-y">
+          <template v-for="row in rows" :key="row.kind === 'user' ? `u-${row.data.id}` : `i-${row.data.id}`">
+            <!-- Active user row -->
+            <tr v-if="row.kind === 'user'" class="hover:bg-muted/30 transition-colors">
+              <td class="px-4 py-3">
+                <p class="font-medium">{{ row.data.name }}</p>
+                <p class="text-xs text-muted-foreground">{{ row.data.email }}</p>
+              </td>
+              <td class="px-4 py-3">
+                <div v-if="row.data.role_ids.length" class="flex flex-wrap gap-1">
+                  <span
+                    v-for="id in row.data.role_ids"
+                    :key="id"
+                    class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium text-white"
+                    :style="{ backgroundColor: roleColor(id) }"
+                  >
+                    {{ roleName(id) }}
+                  </span>
+                </div>
+                <span v-else class="text-xs text-muted-foreground">—</span>
+              </td>
+              <td class="px-4 py-3 text-muted-foreground tabular-nums">
+                {{ decimalHoursToHm(row.data.contracted_hours) }}h
+              </td>
+              <td class="px-4 py-3">
+                <span
+                  v-if="row.data.is_admin"
+                  class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
+                >
+                  <ShieldCheck class="h-3 w-3" />
+                  {{ t('users.admin') }}
+                </span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex gap-0.5 justify-end">
+                  <Button variant="ghost" size="icon" class="h-7 w-7" @click="openEdit(row.data)">
+                    <Pencil class="h-3.5 w-3.5" />
+                  </Button>
+                  <Button variant="ghost" size="icon" class="h-7 w-7 text-destructive hover:text-destructive" @click="openDelete(row.data)">
+                    <Trash2 class="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Pending invite row -->
+            <tr v-else class="hover:bg-muted/30 transition-colors opacity-70">
+              <td class="px-4 py-3">
+                <p class="text-muted-foreground italic">{{ row.data.email }}</p>
+              </td>
+              <td class="px-4 py-3">
+                <div v-if="row.data.role_ids.length" class="flex flex-wrap gap-1">
+                  <span
+                    v-for="id in row.data.role_ids"
+                    :key="id"
+                    class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium text-white"
+                    :style="{ backgroundColor: roleColor(id) }"
+                  >
+                    {{ roleName(id) }}
+                  </span>
+                </div>
+                <span v-else class="text-xs text-muted-foreground">—</span>
+              </td>
+              <td class="px-4 py-3 text-muted-foreground tabular-nums">
+                {{ decimalHoursToHm(parseFloat(row.data.contracted_hours)) }}h
+              </td>
+              <td class="px-4 py-3">
+                <span class="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-600">
+                  <Clock class="h-3 w-3" />
+                  {{ t('users.pending') }}
+                </span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex gap-0.5 justify-end">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    class="h-7 w-7 text-destructive hover:text-destructive"
+                    :disabled="revokeInvitation.isPending.value"
+                    @click="revokeInvitation.mutate(row.data.id)"
+                  >
+                    <Trash2 class="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
     </div>
 
     <Dialog :open="dialogOpen" @update:open="dialogOpen = $event">

@@ -42,12 +42,12 @@ const hasActivities = computed(() => (activitiesQuery.data.value?.length ?? 0) >
 const hasUsers = computed(() => (usersQuery.data.value?.length ?? 0) > 0)
 const showChecklist = computed(() => !hasRoles.value || !hasActivities.value || !hasUsers.value)
 
-const activeTab = ref('roles')
+const activeTab = ref('users')
 </script>
 
 <template>
   <AppLayout>
-    <div class="max-w-3xl mx-auto">
+    <div class="max-w-5xl mx-auto">
       <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-semibold">{{ t('organisation.title') }}</h1>
 
@@ -113,11 +113,30 @@ const activeTab = ref('roles')
 
         <Tabs v-model="activeTab">
           <TabsList class="mb-4">
-            <TabsTrigger value="roles">{{ t('organisation.tabs.roles') }}</TabsTrigger>
-            <TabsTrigger value="activities">{{ t('organisation.tabs.activities') }}</TabsTrigger>
-            <TabsTrigger value="users">{{ t('organisation.tabs.users') }}</TabsTrigger>
+            <TabsTrigger value="users" class="gap-2">
+              {{ t('organisation.tabs.users') }}
+              <span v-if="usersQuery.data.value?.length" class="rounded-full bg-muted px-1.5 py-0.5 text-xs font-medium tabular-nums leading-none">
+                {{ usersQuery.data.value.length }}
+              </span>
+            </TabsTrigger>
+            <TabsTrigger value="roles" class="gap-2">
+              {{ t('organisation.tabs.roles') }}
+              <span v-if="rolesQuery.data.value?.length" class="rounded-full bg-muted px-1.5 py-0.5 text-xs font-medium tabular-nums leading-none">
+                {{ rolesQuery.data.value.length }}
+              </span>
+            </TabsTrigger>
+            <TabsTrigger value="activities" class="gap-2">
+              {{ t('organisation.tabs.activities') }}
+              <span v-if="activitiesQuery.data.value?.length" class="rounded-full bg-muted px-1.5 py-0.5 text-xs font-medium tabular-nums leading-none">
+                {{ activitiesQuery.data.value.length }}
+              </span>
+            </TabsTrigger>
             <TabsTrigger value="calendar">{{ t('organisation.tabs.calendar') }}</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="users">
+            <UsersTab :organisation-id="orgId" />
+          </TabsContent>
 
           <TabsContent value="roles">
             <RolesTab :organisation-id="orgId" />
@@ -125,10 +144,6 @@ const activeTab = ref('roles')
 
           <TabsContent value="activities">
             <ActivitiesTab :organisation-id="orgId" />
-          </TabsContent>
-
-          <TabsContent value="users">
-            <UsersTab :organisation-id="orgId" />
           </TabsContent>
 
           <TabsContent value="calendar">

@@ -22,6 +22,7 @@
   },
   "daySheet": {
     "addEntry": "Add entry",
+    "copyDay": "Copy day",
     "delete": {
       "title": "Delete entry?",
       "description": "This will permanently delete the \"{name}\" entry. This cannot be undone.",
@@ -122,6 +123,8 @@
     "noActivitiesHint": "Create activities like \"Classroom teaching\" or \"Planning\".",
     "createFirst": "Create first activity",
     "inactive": "(inactive)",
+    "search": "Search activities...",
+    "noResults": "No activities match your search.",
     "dialog": {
       "new": "New activity",
       "edit": "Edit activity",
@@ -175,6 +178,15 @@
     "noUsersHint": "Add staff members so they can log their time.",
     "addFirst": "Add first user",
     "admin": "Admin",
+    "pending": "Invite pending",
+    "search": "Search users...",
+    "noResults": "No users match your search.",
+    "table": {
+      "name": "Name",
+      "role": "Role",
+      "hours": "Hours",
+      "status": "Status"
+    },
     "dialog": {
       "new": "New user",
       "edit": "Edit user",
@@ -247,6 +259,19 @@
       "submitting": "Resetting...",
       "backToLogin": "Back to login"
     }
+  },
+  "copyDay": {
+    "title": "Copy day",
+    "subtitle": "Copying {count} {entryWord} · {total} from {date}",
+    "entryWord": "entry | entries",
+    "showWeekends": "Show weekends",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "noDays": "No days to show.",
+    "alreadyLogged": "already logged",
+    "warning": "{count} selected day already has entries — they will be appended. | {count} selected days already have entries — they will be appended.",
+    "copy": "Copy to {count} day | Copy to {count} days",
+    "copying": "Copying..."
   },
   "colorPicker": {
     "usedBy": "Used by: {name}"

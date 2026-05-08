@@ -22,6 +22,7 @@
   },
   "daySheet": {
     "addEntry": "Dodaj unos",
+    "copyDay": "Kopiraj dan",
     "delete": {
       "title": "Izbriši unos?",
       "description": "Ovo će trajno izbrisati unos \"{name}\". Ova radnja se ne može poništiti.",
@@ -122,6 +123,8 @@
     "noActivitiesHint": "Kreirajte aktivnosti poput \"Nastava u razredu\" ili \"Planiranje\".",
     "createFirst": "Kreiraj prvu aktivnost",
     "inactive": "(neaktivno)",
+    "search": "Pretraži aktivnosti...",
+    "noResults": "Nema aktivnosti koje odgovaraju pretrazi.",
     "dialog": {
       "new": "Nova aktivnost",
       "edit": "Uredi aktivnost",
@@ -175,6 +178,15 @@
     "noUsersHint": "Dodajte zaposlenike kako bi mogli bilježiti radno vrijeme.",
     "addFirst": "Dodaj prvog korisnika",
     "admin": "Administrator",
+    "pending": "Poziv na čekanju",
+    "search": "Pretraži korisnike...",
+    "noResults": "Nema korisnika koji odgovaraju pretrazi.",
+    "table": {
+      "name": "Ime",
+      "role": "Uloga",
+      "hours": "Sati",
+      "status": "Status"
+    },
     "dialog": {
       "new": "Novi korisnik",
       "edit": "Uredi korisnika",
@@ -247,6 +259,19 @@
       "submitting": "Resetiranje...",
       "backToLogin": "Natrag na prijavu"
     }
+  },
+  "copyDay": {
+    "title": "Kopiraj dan",
+    "subtitle": "Kopiranje {count} {entryWord} · {total} od {date}",
+    "entryWord": "unos | unosa",
+    "showWeekends": "Prikaži vikende",
+    "selectAll": "Odaberi sve",
+    "deselectAll": "Poništi odabir",
+    "noDays": "Nema dana za prikaz.",
+    "alreadyLogged": "već uneseno",
+    "warning": "{count} odabrani dan već ima unose — bit će dodani. | {count} odabrana dana već imaju unose — bit će dodani.",
+    "copy": "Kopiraj u {count} dan | Kopiraj u {count} dana",
+    "copying": "Kopiranje..."
   },
   "colorPicker": {
     "usedBy": "Koristi: {name}"

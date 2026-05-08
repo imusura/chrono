@@ -10,6 +10,7 @@ use App\Mail\InvitationMail;
 use App\Models\Invitation;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -19,6 +20,27 @@ use Illuminate\Support\Str;
 class InvitationController extends Controller
 {
     use ResolvesOrganisation;
+
+    public function index(Request $request): JsonResponse
+    {
+        $orgId = $this->resolveOrgId($request);
+
+        $invitations = Invitation::where('organisation_id', $orgId)
+            ->whereNull('accepted_at')
+            ->where('expires_at', '>', now())
+            ->get(['id', 'email', 'role_ids', 'contracted_hours', 'is_admin', 'expires_at']);
+
+        return response()->json(['data' => $invitations]);
+    }
+
+    public function destroy(Request $request, Invitation $invitation): JsonResponse
+    {
+        $this->authorizeOrgAccess($request, $invitation->organisation_id);
+
+        $invitation->delete();
+
+        return response()->json(null, 204);
+    }
 
     public function store(StoreInvitationRequest $request): JsonResponse
     {

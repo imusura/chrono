@@ -29,11 +29,14 @@ Route::middleware('auth:sanctum')->group(function (): void {
 
     Route::get('/time-entries', [TimeEntryController::class, 'index']);
     Route::post('/time-entries', [TimeEntryController::class, 'store']);
+    Route::post('/time-entries/batch', [TimeEntryController::class, 'batch']);
     Route::put('/time-entries/{timeEntry}', [TimeEntryController::class, 'update']);
     Route::delete('/time-entries/{timeEntry}', [TimeEntryController::class, 'destroy']);
 
     Route::middleware('admin')->group(function (): void {
+        Route::get('/invitations', [InvitationController::class, 'index']);
         Route::post('/invitations', [InvitationController::class, 'store']);
+        Route::delete('/invitations/{invitation}', [InvitationController::class, 'destroy']);
 
         Route::get('/users', [UserController::class, 'index']);
         Route::post('/users', [UserController::class, 'store']);

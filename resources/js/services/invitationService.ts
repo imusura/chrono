@@ -1,5 +1,5 @@
 import api from '@/httpClient'
-import type { User } from '@/types'
+import type { PendingInvitation, User } from '@/types'
 
 export interface StoreInvitationPayload {
   emails: string[]
@@ -19,6 +19,17 @@ export interface InvitationResult {
 }
 
 export const invitationService = {
+  getAll: async (organisationId?: number): Promise<PendingInvitation[]> => {
+    const { data } = await api.get<{ data: PendingInvitation[] }>('/invitations', {
+      params: organisationId ? { organisation_id: organisationId } : undefined,
+    })
+    return data.data
+  },
+
+  destroy: async (id: number): Promise<void> => {
+    await api.delete(`/invitations/${id}`)
+  },
+
   store: async (payload: StoreInvitationPayload): Promise<InvitationResult> => {
     const { data } = await api.post<InvitationResult>('/invitations', payload)
     return data

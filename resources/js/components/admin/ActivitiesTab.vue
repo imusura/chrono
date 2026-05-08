@@ -22,7 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Pencil, Trash2, Plus } from 'lucide-vue-next'
+import { Pencil, Trash2, Plus, Search } from 'lucide-vue-next'
 import { useAdminActivities } from '@/composables/useAdminActivities'
 import ColorPicker from '@/components/admin/ColorPicker.vue'
 import type { Activity } from '@/types'
@@ -103,6 +103,13 @@ const usedColors = computed(() =>
     .map((a) => ({ color: a.color, label: a.name })),
 )
 
+const search = ref('')
+const filteredActivities = computed(() => {
+  const q = search.value.trim().toLowerCase()
+  if (!q) return query.data.value ?? []
+  return (query.data.value ?? []).filter((a) => a.name.toLowerCase().includes(q))
+})
+
 const confirmDelete = async () => {
   if (!deleting.value) return
   await destroyMutation.mutateAsync(deleting.value.id)
@@ -113,9 +120,13 @@ const confirmDelete = async () => {
 
 <template>
   <div>
-    <div class="flex items-center justify-between mb-4">
-      <p class="text-sm text-muted-foreground">{{ t('activities.description') }}</p>
-      <Button size="sm" @click="openCreate">
+    <div class="flex items-center gap-3 mb-4">
+      <p class="text-sm text-muted-foreground shrink-0">{{ t('activities.description') }}</p>
+      <div class="relative flex-1">
+        <Search class="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+        <Input v-model="search" class="pl-8 h-8 text-sm" :placeholder="t('activities.search')" />
+      </div>
+      <Button size="sm" class="shrink-0" @click="openCreate">
         <Plus class="h-4 w-4 mr-1" />
         {{ t('activities.newActivity') }}
       </Button>
@@ -134,9 +145,13 @@ const confirmDelete = async () => {
       </Button>
     </div>
 
+    <div v-else-if="!filteredActivities.length" class="rounded-lg border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
+      {{ t('activities.noResults') }}
+    </div>
+
     <div v-else class="rounded-lg border divide-y">
       <div
-        v-for="activity in query.data.value"
+        v-for="activity in filteredActivities"
         :key="activity.id"
         class="flex items-center justify-between px-4 py-3"
       >

@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
+import { useQueryClient } from '@tanstack/vue-query'
 import { useAdminRoles } from '@/composables/useAdminRoles'
 import { invitationService } from '@/services/invitationService'
 import { hmToDecimalHours } from '@/lib/format'
@@ -30,6 +31,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const queryClient = useQueryClient()
 const orgIdRef = computed(() => props.organisationId)
 const { query: rolesQuery } = useAdminRoles(orgIdRef)
 
@@ -92,6 +94,7 @@ const submit = async () => {
       toast.info(t('invite.dialog.skippedToast', { count: skippedCount }))
     }
 
+    await queryClient.invalidateQueries({ queryKey: ['admin-invitations'] })
     emit('update:open', false)
   } catch (error) {
     if (error instanceof ValidationError) {
