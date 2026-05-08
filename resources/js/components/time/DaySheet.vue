@@ -8,10 +8,11 @@ import {
   AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
   AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Plus, Pencil, Trash2 } from 'lucide-vue-next'
+import { Plus, Pencil, Trash2, Copy } from 'lucide-vue-next'
 import type { TimeEntry, StoreTimeEntryPayload, UpdateTimeEntryPayload, TimeEntryMode } from '@/types'
 import { minutesToHm, formatDayLong } from '@/lib/format'
 import TimeEntryDialog from './TimeEntryDialog.vue'
+import CopyDayDialog from './CopyDayDialog.vue'
 import type { AxiosError } from 'axios'
 import { useI18n } from 'vue-i18n'
 
@@ -22,9 +23,11 @@ const props = defineProps<{
   entries: TimeEntry[]
   contractedMinutes: number
   holidayName?: string
+  entriesByDate: Map<string, TimeEntry[]>
   onStore: (payload: StoreTimeEntryPayload) => Promise<unknown>
   onUpdate: (id: number, payload: UpdateTimeEntryPayload) => Promise<unknown>
   onDestroy: (id: number) => Promise<unknown>
+  onCopyDay: (entries: StoreTimeEntryPayload[]) => Promise<unknown>
 }>()
 
 const emit = defineEmits<{
@@ -38,6 +41,7 @@ const editingEntry = ref<TimeEntry | null>(null)
 const dialogRef = ref<InstanceType<typeof TimeEntryDialog> | null>(null)
 const deleteDialogOpen = ref(false)
 const deletingEntry = ref<TimeEntry | null>(null)
+const copyDayDialogOpen = ref(false)
 
 const totalMinutes = () =>
   props.entries.reduce((sum, e) => sum + e.duration_minutes, 0)
@@ -62,6 +66,11 @@ const confirmDelete = async () => {
   await props.onDestroy(deletingEntry.value.id)
   deleteDialogOpen.value = false
   deletingEntry.value = null
+}
+
+const handleCopyDay = async (entries: StoreTimeEntryPayload[]) => {
+  await props.onCopyDay(entries)
+  copyDayDialogOpen.value = false
 }
 
 const handleSave = async (payload: StoreTimeEntryPayload | UpdateTimeEntryPayload) => {
@@ -139,10 +148,18 @@ const handleSave = async (payload: StoreTimeEntryPayload | UpdateTimeEntryPayloa
 
       <Separator />
 
-      <div class="px-6 py-4">
-        <Button class="w-full" @click="openAdd">
+      <div class="px-6 py-4 flex gap-2">
+        <Button class="flex-1" @click="openAdd">
           <Plus class="h-4 w-4 mr-1" />
           {{ t('daySheet.addEntry') }}
+        </Button>
+        <Button
+          variant="outline"
+          :disabled="entries.length === 0"
+          @click="copyDayDialogOpen = true"
+        >
+          <Copy class="h-4 w-4 mr-1" />
+          {{ t('daySheet.copyDay') }}
         </Button>
       </div>
     </SheetContent>
@@ -158,6 +175,15 @@ const handleSave = async (payload: StoreTimeEntryPayload | UpdateTimeEntryPayloa
     :contracted-minutes="contractedMinutes"
     @update:open="dialogOpen = $event"
     @save="handleSave"
+  />
+
+  <CopyDayDialog
+    :open="copyDayDialogOpen"
+    :source-date="date"
+    :source-entries="entries"
+    :entries-by-date="entriesByDate"
+    @update:open="copyDayDialogOpen = $event"
+    @copy="handleCopyDay"
   />
 
   <AlertDialog :open="deleteDialogOpen" @update:open="deleteDialogOpen = $event">

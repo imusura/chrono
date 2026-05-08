@@ -26,6 +26,10 @@ export interface StoreTimeEntryPayload {
   notes?: string | null
 }
 
+export interface BatchStoreTimeEntryPayload {
+  entries: StoreTimeEntryPayload[]
+}
+
 export interface UpdateTimeEntryPayload {
   activity_id: number
   // range mode

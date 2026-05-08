@@ -1,5 +1,5 @@
 import api from '@/httpClient'
-import type { TimeEntry, StoreTimeEntryPayload, UpdateTimeEntryPayload } from '@/types'
+import type { TimeEntry, StoreTimeEntryPayload, UpdateTimeEntryPayload, BatchStoreTimeEntryPayload } from '@/types'
 
 export const timeEntryService = {
   getMonth: async (year: number, month: number): Promise<TimeEntry[]> => {
@@ -21,5 +21,10 @@ export const timeEntryService = {
 
   destroy: async (id: number): Promise<void> => {
     await api.delete(`/time-entries/${id}`)
+  },
+
+  batchStore: async (payload: BatchStoreTimeEntryPayload): Promise<TimeEntry[]> => {
+    const { data } = await api.post<{ data: TimeEntry[] }>('/time-entries/batch', payload)
+    return data.data
   },
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TimeEntryMode;
+use App\Http\Requests\TimeEntry\BatchStoreTimeEntryRequest;
 use App\Http\Requests\TimeEntry\StoreTimeEntryRequest;
 use App\Http\Requests\TimeEntry\UpdateTimeEntryRequest;
 use App\Http\Resources\TimeEntryResource;
@@ -54,6 +55,20 @@ class TimeEntryController extends Controller
         $timeEntry->load('activity');
 
         return new TimeEntryResource($timeEntry);
+    }
+
+    public function batch(BatchStoreTimeEntryRequest $request): AnonymousResourceCollection
+    {
+        $created = [];
+
+        foreach ($request->validated()['entries'] as $data) {
+            $data['duration_minutes'] = $this->resolveDuration($request, $data);
+            $entry = $request->user()->timeEntries()->create($data);
+            $entry->load('activity');
+            $created[] = $entry;
+        }
+
+        return TimeEntryResource::collection(collect($created));
     }
 
     public function destroy(TimeEntry $timeEntry): JsonResponse

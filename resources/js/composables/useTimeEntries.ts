@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { computed, type Ref } from 'vue'
 import { timeEntryService } from '@/services/timeEntryService'
-import type { StoreTimeEntryPayload, TimeEntry, UpdateTimeEntryPayload } from '@/types'
+import type { BatchStoreTimeEntryPayload, StoreTimeEntryPayload, TimeEntry, UpdateTimeEntryPayload } from '@/types'
 
 export const useTimeEntries = (year: Ref<number>, month: Ref<number>) => {
   const queryClient = useQueryClient()
@@ -30,6 +30,22 @@ export const useTimeEntries = (year: Ref<number>, month: Ref<number>) => {
     onSuccess: invalidate,
   })
 
+  const copyDayMutation = useMutation({
+    mutationFn: (payload: BatchStoreTimeEntryPayload) => timeEntryService.batchStore(payload),
+    onSuccess: (_, payload) => {
+      const affectedKeys = new Set<string>()
+      affectedKeys.add(`${year.value}-${month.value}`)
+      for (const entry of payload.entries) {
+        const d = new Date(entry.date)
+        affectedKeys.add(`${d.getFullYear()}-${d.getMonth() + 1}`)
+      }
+      for (const key of affectedKeys) {
+        const [y, m] = key.split('-').map(Number)
+        queryClient.invalidateQueries({ queryKey: ['time-entries', y, m] })
+      }
+    },
+  })
+
   const entriesByDate = computed(() => {
     const map = new Map<string, TimeEntry[]>()
     for (const entry of query.data.value ?? []) {
@@ -40,5 +56,5 @@ export const useTimeEntries = (year: Ref<number>, month: Ref<number>) => {
     return map
   })
 
-  return { query, entriesByDate, storeMutation, updateMutation, destroyMutation }
+  return { query, entriesByDate, storeMutation, updateMutation, destroyMutation, copyDayMutation }
 }

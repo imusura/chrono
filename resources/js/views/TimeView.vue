@@ -19,7 +19,7 @@ const now = new Date()
 const year = ref(now.getFullYear())
 const month = ref(now.getMonth() + 1)
 
-const { query, entriesByDate, storeMutation, updateMutation, destroyMutation } = useTimeEntries(year, month)
+const { query, entriesByDate, storeMutation, updateMutation, destroyMutation, copyDayMutation } = useTimeEntries(year, month)
 const { query: nwdQuery, nonWorkingDaySet } = useNonWorkingDays(year)
 
 const nonWorkingDayMap = computed(() => {
@@ -98,6 +98,8 @@ const handleStore = (payload: StoreTimeEntryPayload) => storeMutation.mutateAsyn
 const handleUpdate = (id: number, payload: UpdateTimeEntryPayload) =>
   updateMutation.mutateAsync({ id, payload })
 const handleDestroy = (id: number) => destroyMutation.mutateAsync(id)
+const handleCopyDay = (entries: StoreTimeEntryPayload[]) =>
+  copyDayMutation.mutateAsync({ entries })
 
 const isToday = (date: string) => date === toIsoDate(now)
 
@@ -273,9 +275,11 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
       :entries="sheetEntries"
       :contracted-minutes="contractedMinutes"
       :holiday-name="selectedDate ? nonWorkingDayMap.get(selectedDate) : undefined"
+      :entries-by-date="entriesByDate"
       :on-store="handleStore"
       :on-update="handleUpdate"
       :on-destroy="handleDestroy"
+      :on-copy-day="handleCopyDay"
       @update:open="(v) => { if (!v) closeSheet() }"
     />
   </div>
