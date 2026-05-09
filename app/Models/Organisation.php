@@ -3,17 +3,31 @@
 namespace App\Models;
 
 use App\Enums\TimeEntryMode;
+use App\Enums\VacationMode;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name', 'time_entry_mode', 'country_code'])]
+#[Fillable([
+    'name',
+    'time_entry_mode',
+    'country_code',
+    'vacation_mode',
+    'year_reset_date',
+    'carryover_max_days',
+    'carryover_expiry_months',
+    'last_reset_year',
+])]
 class Organisation extends Model
 {
     protected function casts(): array
     {
         return [
-            'time_entry_mode' => TimeEntryMode::class,
+            'time_entry_mode'         => TimeEntryMode::class,
+            'vacation_mode'           => VacationMode::class,
+            'carryover_max_days'      => 'integer',
+            'carryover_expiry_months' => 'integer',
+            'last_reset_year'         => 'integer',
         ];
     }
 

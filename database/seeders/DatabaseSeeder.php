@@ -78,5 +78,7 @@ class DatabaseSeeder extends Seeder
             ]);
             $user->roles()->attach($u['role']->id);
         }
+
+        $this->call(LeaveTypeSeeder::class);
     }
 }

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'organisation_id', 'contracted_hours', 'is_admin', 'is_super_admin'])]
+#[Fillable(['name', 'email', 'password', 'organisation_id', 'contracted_hours', 'is_admin', 'is_super_admin', 'vacation_days'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -27,6 +27,7 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
             'is_super_admin' => 'boolean',
             'contracted_hours' => 'decimal:2',
+            'vacation_days' => 'integer',
         ];
     }
 
@@ -48,5 +49,20 @@ class User extends Authenticatable
     public function periodUnlocks(): HasMany
     {
         return $this->hasMany(PeriodUnlock::class);
+    }
+
+    public function leaveAllocations(): HasMany
+    {
+        return $this->hasMany(LeaveAllocation::class);
+    }
+
+    public function leaveTransactions(): HasMany
+    {
+        return $this->hasMany(LeaveTransaction::class);
+    }
+
+    public function leaveRequests(): HasMany
+    {
+        return $this->hasMany(LeaveRequest::class);
     }
 }
