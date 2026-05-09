@@ -14,6 +14,7 @@ const props = defineProps<{
   sourceDate: string
   sourceEntries: TimeEntry[]
   entriesByDate: Map<string, TimeEntry[]>
+  nonWorkingDayMap: Map<string, string>
 }>()
 
 const emit = defineEmits<{
@@ -55,13 +56,13 @@ const monthLabel = computed(() => formatMonthYear(navYear.value, navMonth.value)
 const isWeekend = (d: Date) => d.getDay() === 0 || d.getDay() === 6
 
 const monthDays = computed(() => {
-  const result: { date: string; iso: Date }[] = []
+  const result: { date: string; iso: Date; isSource: boolean }[] = []
   const d = new Date(navYear.value, navMonth.value - 1, 1)
   while (d.getMonth() === navMonth.value - 1) {
     const iso = new Date(d)
     const date = toIsoDate(iso)
-    if (date !== props.sourceDate && (showWeekends.value || !isWeekend(iso))) {
-      result.push({ date, iso })
+    if (showWeekends.value || !isWeekend(iso) || date === props.sourceDate) {
+      result.push({ date, iso, isSource: date === props.sourceDate })
     }
     d.setDate(d.getDate() + 1)
   }
@@ -78,19 +79,18 @@ const toggle = (date: string) => {
   selectedDates.value = next
 }
 
+const selectableDays = computed(() => monthDays.value.filter(d => !d.isSource))
+
 const toggleAll = () => {
-  if (selectedDates.value.size === monthDays.value.length) {
+  if (selectedDates.value.size === selectableDays.value.length) {
     selectedDates.value = new Set()
   } else {
-    selectedDates.value = new Set(monthDays.value.map(d => d.date))
+    selectedDates.value = new Set(selectableDays.value.map(d => d.date))
   }
 }
 
 const allChecked = computed(() =>
-  monthDays.value.length > 0 && selectedDates.value.size === monthDays.value.length,
-)
-const someChecked = computed(() =>
-  selectedDates.value.size > 0 && selectedDates.value.size < monthDays.value.length,
+  selectableDays.value.length > 0 && selectedDates.value.size === selectableDays.value.length,
 )
 
 const daysWithExisting = computed(() =>
@@ -149,14 +149,14 @@ const handleCopy = async () => {
         <div class="flex items-center gap-2">
           <Checkbox
             id="show-weekends"
-            :checked="showWeekends"
-            @update:checked="showWeekends = $event as boolean"
+            v-model="showWeekends"
           />
           <Label for="show-weekends" class="text-xs text-muted-foreground cursor-pointer">
             {{ t('copyDay.showWeekends') }}
           </Label>
         </div>
         <button
+          type="button"
           class="text-xs text-muted-foreground hover:text-foreground transition-colors"
           @click="toggleAll"
         >
@@ -172,23 +172,37 @@ const handleCopy = async () => {
         <div
           v-for="day in monthDays"
           :key="day.date"
-          class="flex items-center gap-3 px-1 py-2 rounded-md hover:bg-muted/50 cursor-pointer"
-          @click="toggle(day.date)"
+          class="flex items-center gap-3 px-1 py-1.5 rounded-md"
+          :class="[
+            day.isSource
+              ? 'opacity-40 cursor-default'
+              : props.nonWorkingDayMap.has(day.date)
+                ? 'bg-rose-100 dark:bg-rose-950/40 opacity-60 hover:opacity-80 cursor-pointer'
+                : isWeekend(day.iso)
+                  ? 'bg-muted opacity-60 hover:opacity-80 cursor-pointer'
+                  : 'hover:bg-muted/50 cursor-pointer',
+          ]"
+          @click="!day.isSource && toggle(day.date)"
         >
           <Checkbox
-            :id="`day-${day.date}`"
-            :checked="selectedDates.has(day.date)"
-            @update:checked="toggle(day.date)"
+            v-if="!day.isSource"
+            :model-value="selectedDates.has(day.date)"
+            @update:model-value="toggle(day.date)"
             @click.stop
           />
-          <Label :for="`day-${day.date}`" class="flex-1 flex items-center justify-between cursor-pointer select-none">
+          <div v-else class="size-4 shrink-0" />
+          <div class="flex-1 flex items-center justify-between select-none">
             <span class="text-sm capitalize">
               {{ formatWeekdayShort(day.iso) }}, {{ day.iso.getDate() }}
             </span>
-            <span v-if="dayMinutes(day.date) > 0" class="text-xs text-amber-600 dark:text-amber-400 tabular-nums">
-              {{ minutesToHm(dayMinutes(day.date)) }} {{ t('copyDay.alreadyLogged') }}
+            <span v-if="day.isSource" class="text-xs text-muted-foreground italic">{{ t('copyDay.sourceDay') }}</span>
+            <span v-else-if="props.nonWorkingDayMap.has(day.date)" class="text-xs text-muted-foreground italic">
+              {{ props.nonWorkingDayMap.get(day.date) }}
             </span>
-          </Label>
+            <span v-else-if="dayMinutes(day.date) > 0" class="text-xs text-amber-600 dark:text-amber-400 tabular-nums">
+              {{ minutesToHm(dayMinutes(day.date)) }}
+            </span>
+          </div>
         </div>
       </div>
 

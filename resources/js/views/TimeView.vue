@@ -276,6 +276,7 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
       :contracted-minutes="contractedMinutes"
       :holiday-name="selectedDate ? nonWorkingDayMap.get(selectedDate) : undefined"
       :entries-by-date="entriesByDate"
+      :non-working-day-map="nonWorkingDayMap"
       :on-store="handleStore"
       :on-update="handleUpdate"
       :on-destroy="handleDestroy"

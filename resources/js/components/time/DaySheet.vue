@@ -24,6 +24,7 @@ const props = defineProps<{
   contractedMinutes: number
   holidayName?: string
   entriesByDate: Map<string, TimeEntry[]>
+  nonWorkingDayMap: Map<string, string>
   onStore: (payload: StoreTimeEntryPayload) => Promise<unknown>
   onUpdate: (id: number, payload: UpdateTimeEntryPayload) => Promise<unknown>
   onDestroy: (id: number) => Promise<unknown>
@@ -182,6 +183,7 @@ const handleSave = async (payload: StoreTimeEntryPayload | UpdateTimeEntryPayloa
     :source-date="date"
     :source-entries="entries"
     :entries-by-date="entriesByDate"
+    :non-working-day-map="nonWorkingDayMap"
     @update:open="copyDayDialogOpen = $event"
     @copy="handleCopyDay"
   />
