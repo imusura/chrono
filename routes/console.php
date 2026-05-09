@@ -9,3 +9,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('app:sync-public-holidays')->yearlyOn(1, 1, '03:00');
+Schedule::command('app:run-annual-leave-reset')->dailyAt('02:00');
+Schedule::command('app:run-carryover-expiry')->dailyAt('02:30');
