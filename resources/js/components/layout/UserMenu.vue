@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { LogOut, Sun, Moon, Monitor, Languages, Building2, Clock } from 'lucide-vue-next'
+import { LogOut, Sun, Moon, Monitor, Languages, Building2, Clock, MessageSquare } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import { useAppearanceStore } from '@/stores/appearance'
 import { useLocaleStore } from '@/stores/locale'
@@ -17,12 +18,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useI18n } from 'vue-i18n'
+import FeedbackDialog from '@/components/feedback/FeedbackDialog.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const appearanceStore = useAppearanceStore()
 const localeStore = useLocaleStore()
 const { t } = useI18n()
+
+const feedbackOpen = ref(false)
 
 const handleLogout = async () => {
   await authStore.logout()
@@ -107,10 +111,17 @@ const handleLogout = async () => {
         </DropdownMenuSubContent>
       </DropdownMenuSub>
       <DropdownMenuSeparator />
+      <DropdownMenuItem @click="feedbackOpen = true">
+        <MessageSquare class="mr-2 size-4" />
+        {{ t('feedback.title') }}
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
       <DropdownMenuItem @click="handleLogout">
         <LogOut class="mr-2 size-4" />
         {{ t('userMenu.logout') }}
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
+
+  <FeedbackDialog v-model:open="feedbackOpen" />
 </template>

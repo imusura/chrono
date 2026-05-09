@@ -1,4 +1,5 @@
 export * from './user'
+export * from './feedback'
 export * from './errors'
 export * from './pagination'
 export * from './timeEntry'

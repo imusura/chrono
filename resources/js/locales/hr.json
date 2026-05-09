@@ -269,12 +269,29 @@
     "deselectAll": "Poništi odabir",
     "noDays": "Nema dana za prikaz.",
     "alreadyLogged": "već uneseno",
+    "sourceDay": "izvor",
     "warning": "{count} odabrani dan već ima unose — bit će dodani. | {count} odabrana dana već imaju unose — bit će dodani.",
     "copy": "Kopiraj u {count} dan | Kopiraj u {count} dana",
     "copying": "Kopiranje..."
   },
   "colorPicker": {
     "usedBy": "Koristi: {name}"
+  },
+  "feedback": {
+    "title": "Pošalji povratnu informaciju",
+    "subtitle": "Prijavi grešku, predloži ideju ili postavi pitanje.",
+    "category_suggestion": "Prijedlog",
+    "category_bug": "Greška",
+    "category_question": "Pitanje",
+    "subject_label": "Naslov",
+    "description_label": "Opis",
+    "privacy_note": "Šaljemo vaše ime, e-poštu, trenutnu stranicu i info o pregledniku.",
+    "what_gets_sent": "Što se šalje?",
+    "what_gets_sent_detail": "Vaše ime, e-mail adresa, URL trenutne stranice, info o pregledniku i vaša organizacija (ako je primjenjivo) šalju se uz vašu poruku kako bismo mogli istražiti.",
+    "send": "Pošalji",
+    "sending": "Slanje...",
+    "success": "Povratna informacija poslana — hvala!",
+    "error": "Nije moguće poslati povratnu informaciju. Pokušajte ponovo."
   },
   "common": {
     "cancel": "Odustani",

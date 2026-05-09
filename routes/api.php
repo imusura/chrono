@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\NonWorkingDayController;
 use App\Http\Controllers\OrganisationController;
@@ -23,6 +24,7 @@ Route::post('/invitations/{token}/accept', [InvitationController::class, 'accept
 Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/user', fn (Request $request) => response()->json(new UserResource($request->user()->loadMissing('organisation'))));
     Route::post('/logout', [LoginController::class, 'logout']);
+    Route::post('/feedback', [FeedbackController::class, 'store']);
 
     Route::get('/user-activities', [UserActivityController::class, 'index']);
     Route::get('/non-working-days', [NonWorkingDayController::class, 'index']);

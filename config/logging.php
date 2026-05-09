@@ -135,6 +135,14 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'feedback' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/feedback.log'),
+            'level' => 'debug',
+            'days' => 30,
+            'replace_placeholders' => true,
+        ],
+
     ],
 
 ];

@@ -269,12 +269,29 @@
     "deselectAll": "Deselect all",
     "noDays": "No days to show.",
     "alreadyLogged": "already logged",
+    "sourceDay": "source",
     "warning": "{count} selected day already has entries — they will be appended. | {count} selected days already have entries — they will be appended.",
     "copy": "Copy to {count} day | Copy to {count} days",
     "copying": "Copying..."
   },
   "colorPicker": {
     "usedBy": "Used by: {name}"
+  },
+  "feedback": {
+    "title": "Send feedback",
+    "subtitle": "Report a bug, suggest an idea, or ask a question.",
+    "category_suggestion": "Suggestion",
+    "category_bug": "Bug",
+    "category_question": "Question",
+    "subject_label": "Subject",
+    "description_label": "Description",
+    "privacy_note": "We include your name, email, current page, and browser info.",
+    "what_gets_sent": "What gets sent?",
+    "what_gets_sent_detail": "Your name, email address, the current page URL, browser info, and your organisation (if applicable) are sent alongside your message to help us investigate.",
+    "send": "Send",
+    "sending": "Sending...",
+    "success": "Feedback sent — thanks!",
+    "error": "Couldn't send feedback. Please try again."
   },
   "common": {
     "cancel": "Cancel",

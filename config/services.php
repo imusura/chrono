@@ -41,4 +41,10 @@ return [
         ],
     ],
 
+    'ticketing' => [
+        'base_url' => env('TICKETING_BASE_URL'),
+        'token' => env('TICKETING_TOKEN'),
+        'timeout' => env('TICKETING_TIMEOUT', 10),
+    ],
+
 ];
