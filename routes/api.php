@@ -5,6 +5,11 @@ use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\LeaveAllocationController;
+use App\Http\Controllers\LeaveBalanceController;
+use App\Http\Controllers\LeaveRequestController;
+use App\Http\Controllers\LeaveTransactionController;
+use App\Http\Controllers\LeaveTypeController;
 use App\Http\Controllers\NonWorkingDayController;
 use App\Http\Controllers\OrganisationController;
 use App\Http\Controllers\RoleController;
@@ -28,6 +33,14 @@ Route::middleware('auth:sanctum')->group(function (): void {
 
     Route::get('/user-activities', [UserActivityController::class, 'index']);
     Route::get('/non-working-days', [NonWorkingDayController::class, 'index']);
+
+    Route::get('/leave/types', [LeaveTypeController::class, 'index']);
+    Route::get('/leave/balance', [LeaveBalanceController::class, 'index']);
+    Route::get('/leave/transactions', [LeaveTransactionController::class, 'index']);
+    Route::get('/leave/requests', [LeaveRequestController::class, 'index']);
+    Route::post('/leave/requests', [LeaveRequestController::class, 'store']);
+    Route::patch('/leave/requests/{leaveRequest}', [LeaveRequestController::class, 'updateStatus']);
+    Route::delete('/leave/requests/{leaveRequest}', [LeaveRequestController::class, 'destroy']);
 
     Route::get('/time-entries', [TimeEntryController::class, 'index']);
     Route::post('/time-entries', [TimeEntryController::class, 'store']);
@@ -59,6 +72,14 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::post('/non-working-days', [NonWorkingDayController::class, 'store']);
         Route::put('/non-working-days/{nonWorkingDay}', [NonWorkingDayController::class, 'update']);
         Route::delete('/non-working-days/{nonWorkingDay}', [NonWorkingDayController::class, 'destroy']);
+
+        Route::get('/leave/requests/all', [LeaveRequestController::class, 'indexForOrganisation']);
+        Route::get('/leave/users/{user}/balance', [LeaveBalanceController::class, 'showForUser']);
+        Route::get('/leave/users/{user}/transactions', [LeaveTransactionController::class, 'indexForUser']);
+        Route::get('/leave/users/{user}/allocations', [LeaveAllocationController::class, 'indexForUser']);
+        Route::post('/leave/allocations', [LeaveAllocationController::class, 'store']);
+        Route::delete('/leave/allocations/{leaveAllocation}', [LeaveAllocationController::class, 'destroy']);
+        Route::post('/leave/adjustments', [LeaveTransactionController::class, 'storeAdjustment']);
     });
 
     Route::middleware('super_admin')->group(function (): void {
