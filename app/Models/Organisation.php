@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Enums\TimeEntryMode;
 use App\Enums\VacationMode;
+use Database\Factories\OrganisationFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -20,6 +22,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 ])]
 class Organisation extends Model
 {
+    /** @use HasFactory<OrganisationFactory> */
+    use HasFactory;
+
     protected function casts(): array
     {
         return [
