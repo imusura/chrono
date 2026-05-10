@@ -1,26 +1,35 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { ref, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { CalendarDays, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Skeleton } from '@/components/ui/skeleton'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useTimeEntries } from '@/composables/useTimeEntries'
 import { useNonWorkingDays } from '@/composables/useNonWorkingDays'
-import { minutesToHm, toIsoDate, timeToOffset, formatMonthYear, formatWeekdayShort } from '@/lib/format'
+import { useLeaveDays } from '@/composables/useLeaveDays'
+import { minutesToHm, toIsoDate, timeToOffset, formatMonthYear, formatMonthShort, formatWeekdayShort } from '@/lib/format'
+import { holidayIcon, leaveIconFor } from '@/lib/dayIcons'
+import { leaveColorFor } from '@/lib/leaveColors'
 import type { StoreTimeEntryPayload, UpdateTimeEntryPayload } from '@/types'
 import DaySheet from '@/components/time/DaySheet.vue'
 import { useI18n } from 'vue-i18n'
 
 const auth = useAuthStore()
 const { t, locale } = useI18n()
+const route = useRoute()
 
 const now = new Date()
-const year = ref(now.getFullYear())
-const month = ref(now.getMonth() + 1)
+const initialYear = route.query.year ? Number(route.query.year) : now.getFullYear()
+const initialMonth = route.query.month ? Number(route.query.month) : now.getMonth() + 1
+const year = ref(Number.isFinite(initialYear) ? initialYear : now.getFullYear())
+const month = ref(Number.isFinite(initialMonth) ? initialMonth : now.getMonth() + 1)
 
 const { query, entriesByDate, storeMutation, updateMutation, destroyMutation, copyDayMutation } = useTimeEntries(year, month)
 const { query: nwdQuery, nonWorkingDaySet } = useNonWorkingDays(year)
+const { leaveDayMap } = useLeaveDays(year, month)
 
 const nonWorkingDayMap = computed(() => {
   const map = new Map<string, string>()
@@ -46,9 +55,31 @@ const prevMonth = () => {
 const nextMonth = () => {
   if (month.value === 12) { year.value++; month.value = 1 } else { month.value++ }
 }
+const prevYear = () => { year.value-- }
+const nextYear = () => { year.value++ }
+const goToToday = () => {
+  year.value = now.getFullYear()
+  month.value = now.getMonth() + 1
+}
+const isCurrentMonth = computed(() =>
+  year.value === now.getFullYear() && month.value === now.getMonth() + 1,
+)
+
+const pickerOpen = ref(false)
+const pickerYear = ref(year.value)
+watch(pickerOpen, (open) => { if (open) pickerYear.value = year.value })
+
+const monthShort = (m: number) => formatMonthShort(m)
+const pickMonth = (m: number) => {
+  year.value = pickerYear.value
+  month.value = m
+  pickerOpen.value = false
+}
 
 const isWeekend = (d: Date) => d.getDay() === 0 || d.getDay() === 6
 const isNonWorking = (date: string) => nonWorkingDaySet.value.has(date)
+const isLeave = (date: string, iso: Date) =>
+  leaveDayMap.value.has(date) && !isWeekend(iso) && !isNonWorking(date)
 
 const timeEntryMode = computed(() => auth.user?.time_entry_mode ?? 'range')
 
@@ -69,10 +100,13 @@ const dayStatus = (date: string) => {
   return mins >= contractedMinutes.value ? 'met' : 'partial'
 }
 
-const isDimmed = (date: string, iso: Date) => isWeekend(iso) || isNonWorking(date)
+const isDimmed = (date: string, iso: Date) =>
+  isWeekend(iso) || isNonWorking(date) || isLeave(date, iso)
 
 const monthExpectedMinutes = computed(() =>
-  days.value.filter(({ date, iso }) => !isWeekend(iso) && !isNonWorking(date)).length * contractedMinutes.value,
+  days.value.filter(
+    ({ date, iso }) => !isWeekend(iso) && !isNonWorking(date) && !isLeave(date, iso),
+  ).length * contractedMinutes.value,
 )
 
 const monthLoggedMinutes = computed(() =>
@@ -113,11 +147,50 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
     <div class="flex items-center justify-between px-3 sm:px-6 py-4 border-b">
       <h1 class="text-lg font-semibold capitalize">{{ monthLabel }}</h1>
       <div class="flex gap-1">
-        <Button variant="outline" size="icon" @click="prevMonth">
+        <Button variant="outline" size="icon" :title="t('time.prevYear')" @click="prevYear">
+          <ChevronsLeft class="h-4 w-4" />
+        </Button>
+        <Button variant="outline" size="icon" :title="t('time.prevMonth')" @click="prevMonth">
           <ChevronLeft class="h-4 w-4" />
         </Button>
-        <Button variant="outline" size="icon" @click="nextMonth">
+        <Button variant="outline" :disabled="isCurrentMonth" @click="goToToday">
+          {{ t('time.today') }}
+        </Button>
+        <Popover v-model:open="pickerOpen">
+          <PopoverTrigger as-child>
+            <Button variant="outline" size="icon" :title="t('time.jumpToMonth')">
+              <CalendarDays class="h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent class="w-64 p-3" align="end">
+            <div class="flex items-center justify-between mb-2">
+              <Button variant="ghost" size="icon" :title="t('time.prevYear')" @click="pickerYear--">
+                <ChevronLeft class="h-4 w-4" />
+              </Button>
+              <span class="text-sm font-semibold tabular-nums">{{ pickerYear }}</span>
+              <Button variant="ghost" size="icon" :title="t('time.nextYear')" @click="pickerYear++">
+                <ChevronRight class="h-4 w-4" />
+              </Button>
+            </div>
+            <div class="grid grid-cols-3 gap-1">
+              <Button
+                v-for="m in 12"
+                :key="m"
+                :variant="pickerYear === year && m === month ? 'default' : 'ghost'"
+                size="sm"
+                class="capitalize"
+                @click="pickMonth(m)"
+              >
+                {{ monthShort(m) }}
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
+        <Button variant="outline" size="icon" :title="t('time.nextMonth')" @click="nextMonth">
           <ChevronRight class="h-4 w-4" />
+        </Button>
+        <Button variant="outline" size="icon" :title="t('time.nextYear')" @click="nextYear">
+          <ChevronsRight class="h-4 w-4" />
         </Button>
       </div>
     </div>
@@ -190,6 +263,7 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
             class="relative w-full flex items-center gap-3 sm:gap-4 px-3 sm:px-6 py-3 text-left transition-colors"
             :class="[
               isNonWorking(day.date) ? 'bg-rose-100 dark:bg-rose-950/40' :
+              isLeave(day.date, day.iso) ? leaveColorFor(leaveDayMap.get(day.date)).rowBg :
               isWeekend(day.iso) ? 'bg-muted hover:bg-muted' :
               'hover:bg-muted/50',
               isDimmed(day.date, day.iso) ? 'opacity-60' : '',
@@ -221,7 +295,7 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
             </div>
 
             <div class="flex-1 min-w-0 relative">
-              <div class="relative h-8 rounded bg-muted/40 overflow-hidden">
+              <div class="relative h-8 rounded overflow-hidden">
                 <!-- Range mode: time-positioned blocks -->
                 <template v-if="dayStatus(day.date) !== 'empty' && timeEntryMode === 'range'">
                   <div
@@ -258,8 +332,18 @@ const weekdayShort = (iso: Date) => formatWeekdayShort(iso)
                 </div>
                 <span
                   v-else-if="isNonWorking(day.date)"
-                  class="absolute inset-0 flex items-center px-2 text-xs text-muted-foreground italic"
-                >{{ nonWorkingDayMap.get(day.date) }}</span>
+                  class="absolute inset-0 flex items-center gap-1.5 px-2 text-xs text-muted-foreground italic"
+                >
+                  <component :is="holidayIcon" class="size-3.5 shrink-0" />
+                  <span class="truncate">{{ nonWorkingDayMap.get(day.date) }}</span>
+                </span>
+                <span
+                  v-else-if="isLeave(day.date, day.iso)"
+                  class="absolute inset-0 flex items-center gap-1.5 px-2 text-xs text-muted-foreground italic"
+                >
+                  <component :is="leaveIconFor(leaveDayMap.get(day.date) ?? '')" class="size-3.5 shrink-0" />
+                  <span class="truncate">{{ leaveDayMap.get(day.date) }}</span>
+                </span>
               </div>
             </div>
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { LogOut, Sun, Moon, Monitor, Languages, Building2, Clock, MessageSquare } from 'lucide-vue-next'
+import { LogOut, Sun, Moon, Monitor, Languages, Building2, Clock, MessageSquare, CalendarDays } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import { useAppearanceStore } from '@/stores/appearance'
 import { useLocaleStore } from '@/stores/locale'
@@ -53,15 +53,21 @@ const handleLogout = async () => {
           </span>
         </div>
       </DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem as-child>
+        <RouterLink :to="{ name: 'time' }" class="flex items-center w-full">
+          <Clock class="mr-2 size-4" />
+          {{ t('nav.myTime') }}
+        </RouterLink>
+      </DropdownMenuItem>
+      <DropdownMenuItem as-child>
+        <RouterLink :to="{ name: 'year' }" class="flex items-center w-full">
+          <CalendarDays class="mr-2 size-4" />
+          {{ t('nav.yearOverview') }}
+        </RouterLink>
+      </DropdownMenuItem>
       <template v-if="authStore.isAdmin || authStore.isSuperAdmin">
-        <DropdownMenuSeparator />
         <DropdownMenuItem as-child>
-          <RouterLink :to="{ name: 'time' }" class="flex items-center w-full">
-            <Clock class="mr-2 size-4" />
-            {{ t('nav.myTime') }}
-          </RouterLink>
-        </DropdownMenuItem>
-        <DropdownMenuItem v-if="authStore.isAdmin || authStore.isSuperAdmin" as-child>
           <RouterLink :to="{ name: 'admin.organisation' }" class="flex items-center w-full">
             <Building2 class="mr-2 size-4" />
             {{ t('nav.organisation') }}

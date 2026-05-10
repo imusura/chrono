@@ -10,6 +10,9 @@ export const formatMonthYear = (year: number, month: number): string =>
 export const formatWeekdayShort = (d: Date): string =>
   format(d, 'EEE', { locale: dateFnsLocale() })
 
+export const formatMonthShort = (month: number): string =>
+  format(new Date(2000, month - 1, 1), 'LLL', { locale: dateFnsLocale() })
+
 export const formatDayLong = (dateStr: string): string => {
   if (!dateStr) return ''
   return format(new Date(dateStr + 'T00:00:00'), 'EEEE, d. MMMM', { locale: dateFnsLocale() })

@@ -1,8 +1,43 @@
 {
   "nav": {
     "myTime": "Moje vrijeme",
+    "yearOverview": "Godišnji pregled",
     "organisation": "Organizacija",
     "organisations": "Organizacije"
+  },
+  "year": {
+    "title": "Godišnji pregled",
+    "prevYear": "Prethodna godina",
+    "nextYear": "Sljedeća godina",
+    "thisYear": "Ova godina",
+    "legend": "Legenda",
+    "legendFull": "Pun dan",
+    "legendPartial": "Djelomično",
+    "legendMissing": "Nedostaje",
+    "legendLeave": "Odsustvo",
+    "legendVacation": "Godišnji",
+    "legendSick": "Bolovanje",
+    "legendPaidLeave": "Plaćeni dopust",
+    "legendHoliday": "Praznik",
+    "legendWeekend": "Vikend",
+    "legendClear": "Očisti filter",
+    "legendNonWorking": "Vikend / praznik",
+    "weekend": "Vikend",
+    "holiday": "Praznik",
+    "noLog": "Nema unosa",
+    "statsLogged": "Evidentirani dani",
+    "statsMissing": "Nedostaje dana",
+    "statsLeave": "Dani odsustva",
+    "statsHolidays": "Praznici",
+    "weekdays": {
+      "mon": "Pon",
+      "tue": "Uto",
+      "wed": "Sri",
+      "thu": "Čet",
+      "fri": "Pet",
+      "sat": "Sub",
+      "sun": "Ned"
+    }
   },
   "userMenu": {
     "theme": "Tema",
@@ -18,7 +53,13 @@
     "over": "više",
     "remaining": "preostalo",
     "noEntries": "Nema unosa.",
-    "addEntry": "Dodaj unos"
+    "addEntry": "Dodaj unos",
+    "today": "Danas",
+    "prevMonth": "Prethodni mjesec",
+    "nextMonth": "Sljedeći mjesec",
+    "prevYear": "Prethodna godina",
+    "nextYear": "Sljedeća godina",
+    "jumpToMonth": "Idi na mjesec"
   },
   "daySheet": {
     "addEntry": "Dodaj unos",

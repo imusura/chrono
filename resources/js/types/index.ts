@@ -9,5 +9,6 @@ export * from './role'
 export * from './activity'
 export * from './nonWorkingDay'
 export * from './invitation'
+export * from './yearOverview'
 
 export type AcceptableSelectValue = string | number | bigint | Record<string, unknown> | null

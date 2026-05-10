@@ -14,6 +14,12 @@ const routes: RouteRecordRaw[] = [
     meta: { auth: true },
   },
   {
+    path: '/year',
+    name: 'year',
+    component: () => import('@/views/YearView.vue'),
+    meta: { auth: true },
+  },
+  {
     path: '/admin/organisations',
     name: 'admin.organisations',
     component: () => import('@/views/admin/OrganisationsView.vue'),

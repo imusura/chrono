@@ -1,8 +1,43 @@
 {
   "nav": {
     "myTime": "My Time",
+    "yearOverview": "Year overview",
     "organisation": "Organisation",
     "organisations": "Organisations"
+  },
+  "year": {
+    "title": "Year overview",
+    "prevYear": "Previous year",
+    "nextYear": "Next year",
+    "thisYear": "This year",
+    "legend": "Legend",
+    "legendFull": "Full day",
+    "legendPartial": "Partial",
+    "legendMissing": "Missing",
+    "legendLeave": "Leave",
+    "legendVacation": "Vacation",
+    "legendSick": "Sick day",
+    "legendPaidLeave": "Paid leave",
+    "legendHoliday": "Holiday",
+    "legendWeekend": "Weekend",
+    "legendClear": "Clear filter",
+    "legendNonWorking": "Weekend / holiday",
+    "weekend": "Weekend",
+    "holiday": "Holiday",
+    "noLog": "No entries",
+    "statsLogged": "Days logged",
+    "statsMissing": "Days missing",
+    "statsLeave": "Leave days",
+    "statsHolidays": "Holidays",
+    "weekdays": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    }
   },
   "userMenu": {
     "theme": "Theme",
@@ -18,7 +53,13 @@
     "over": "over",
     "remaining": "remaining",
     "noEntries": "No entries yet.",
-    "addEntry": "Add entry"
+    "addEntry": "Add entry",
+    "today": "Today",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "prevYear": "Previous year",
+    "nextYear": "Next year",
+    "jumpToMonth": "Jump to month"
   },
   "daySheet": {
     "addEntry": "Add entry",
