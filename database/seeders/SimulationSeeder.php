@@ -43,15 +43,9 @@ class SimulationSeeder extends Seeder
 
     private const VACATION_DAYS_PER_YEAR = 20;
 
-    private const RECURRING_HOLIDAYS = [
-        '01-01', '01-06', '05-01', '06-22',
-        '08-05', '08-15', '10-08', '11-01',
-        '12-25', '12-26',
-    ];
-
-    private const EASTER_RELATIVE = [0, 1, 60];
-
     private array $activityIdsByName = [];
+
+    private array $holidaySet = [];
 
     private int $vacationTypeId;
 
@@ -112,44 +106,26 @@ class SimulationSeeder extends Seeder
 
     private function seedHolidaysForAllYears(): void
     {
-        $rows = [];
-        $now = now();
+        $this->command->info('Syncing public holidays for ' . self::START_YEAR . '-2026...');
+
+        NonWorkingDay::whereNull('organisation_id')
+            ->where('country_code', 'HR')
+            ->whereIn('name', ['Public Holiday', 'Easter-related Holiday'])
+            ->delete();
 
         for ($year = self::START_YEAR; $year <= 2026; $year++) {
-            foreach (self::RECURRING_HOLIDAYS as $md) {
-                $rows[] = [
-                    'organisation_id' => null,
-                    'country_code'    => 'HR',
-                    'date'            => "$year-$md",
-                    'name'            => 'Public Holiday',
-                    'created_at'      => $now,
-                    'updated_at'      => $now,
-                ];
-            }
-
-            $easter = $this->easterDate($year);
-            foreach (self::EASTER_RELATIVE as $offset) {
-                $rows[] = [
-                    'organisation_id' => null,
-                    'country_code'    => 'HR',
-                    'date'            => $easter->copy()->addDays($offset)->toDateString(),
-                    'name'            => 'Easter-related Holiday',
-                    'created_at'      => $now,
-                    'updated_at'      => $now,
-                ];
-            }
+            \Illuminate\Support\Facades\Artisan::call('app:sync-public-holidays', [
+                'year'    => $year,
+                'country' => 'HR',
+            ]);
         }
 
-        foreach ($rows as $row) {
-            NonWorkingDay::firstOrCreate(
-                [
-                    'organisation_id' => null,
-                    'country_code'    => $row['country_code'],
-                    'date'            => $row['date'],
-                ],
-                ['name' => $row['name']],
-            );
-        }
+        $this->holidaySet = NonWorkingDay::whereNull('organisation_id')
+            ->where('country_code', 'HR')
+            ->pluck('date')
+            ->map(fn ($d) => $d instanceof \DateTimeInterface ? $d->format('Y-m-d') : substr((string) $d, 0, 10))
+            ->flip()
+            ->all();
     }
 
     /**
@@ -676,38 +652,7 @@ class SimulationSeeder extends Seeder
 
     private function isHoliday(Carbon $date): bool
     {
-        $md = $date->format('m-d');
-        if (in_array($md, self::RECURRING_HOLIDAYS, true)) {
-            return true;
-        }
-
-        $easter = $this->easterDate($date->year);
-        foreach (self::EASTER_RELATIVE as $offset) {
-            if ($date->equalTo($easter->copy()->addDays($offset))) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function easterDate(int $year): Carbon
-    {
-        $a = $year % 19;
-        $b = intdiv($year, 100);
-        $c = $year % 100;
-        $d = intdiv($b, 4);
-        $e = $b % 4;
-        $f = intdiv($b + 8, 25);
-        $g = intdiv($b - $f + 1, 3);
-        $h = (19 * $a + $b - $d - $g + 15) % 30;
-        $i = intdiv($c, 4);
-        $k = $c % 4;
-        $l = (32 + 2 * $e + 2 * $i - $h - $k) % 7;
-        $m = intdiv($a + 11 * $h + 22 * $l, 451);
-        $month = intdiv($h + $l - 7 * $m + 114, 31);
-        $day = (($h + $l - 7 * $m + 114) % 31) + 1;
-        return Carbon::create($year, $month, $day);
+        return isset($this->holidaySet[$date->toDateString()]);
     }
 
     private function lockPeriods(int $orgId): void
