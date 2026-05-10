@@ -35,6 +35,25 @@ class LeaveRequestController extends Controller
         return LeaveRequestResource::collection($requests);
     }
 
+    public function days(Request $request): JsonResponse
+    {
+        $request->validate([
+            'year'  => ['required', 'integer', 'min:2000', 'max:2100'],
+            'month' => ['required', 'integer', 'min:1', 'max:12'],
+        ]);
+
+        $year = $request->integer('year');
+        $month = $request->integer('month');
+        $user = $request->user();
+
+        $start = CarbonImmutable::create($year, $month, 1);
+        $end = $start->endOfMonth()->startOfDay();
+
+        return response()->json([
+            'data' => $this->daysCalculator->expandedLeaveDates($user, $start, $end),
+        ]);
+    }
+
     public function indexForOrganisation(Request $request): AnonymousResourceCollection
     {
         $orgUserIds = $request->user()->organisation?->users()->pluck('id') ?? collect();

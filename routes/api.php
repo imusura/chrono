@@ -16,6 +16,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserActivityController;
 use App\Http\Controllers\TimeEntryController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\YearOverviewController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,10 +38,13 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/leave/types', [LeaveTypeController::class, 'index']);
     Route::get('/leave/balance', [LeaveBalanceController::class, 'index']);
     Route::get('/leave/transactions', [LeaveTransactionController::class, 'index']);
+    Route::get('/leave/days', [LeaveRequestController::class, 'days']);
     Route::get('/leave/requests', [LeaveRequestController::class, 'index']);
     Route::post('/leave/requests', [LeaveRequestController::class, 'store']);
     Route::patch('/leave/requests/{leaveRequest}', [LeaveRequestController::class, 'updateStatus']);
     Route::delete('/leave/requests/{leaveRequest}', [LeaveRequestController::class, 'destroy']);
+
+    Route::get('/year-overview', [YearOverviewController::class, 'index']);
 
     Route::get('/time-entries', [TimeEntryController::class, 'index']);
     Route::post('/time-entries', [TimeEntryController::class, 'store']);
