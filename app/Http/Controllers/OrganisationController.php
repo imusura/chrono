@@ -7,10 +7,24 @@ use App\Http\Requests\Organisation\UpdateOrganisationRequest;
 use App\Http\Resources\OrganisationResource;
 use App\Models\Organisation;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class OrganisationController extends Controller
 {
+    public function show(Request $request): OrganisationResource
+    {
+        return new OrganisationResource($request->user()->organisation);
+    }
+
+    public function updateOwn(UpdateOrganisationRequest $request): OrganisationResource
+    {
+        $organisation = $request->user()->organisation;
+        $organisation->update($request->validated());
+
+        return new OrganisationResource($organisation);
+    }
+
     public function index(): AnonymousResourceCollection
     {
         return OrganisationResource::collection(Organisation::orderBy('name')->get());

@@ -15,7 +15,7 @@ import ActivitiesTab from '@/components/admin/ActivitiesTab.vue'
 import UsersTab from '@/components/admin/UsersTab.vue'
 import CalendarTab from '@/components/admin/CalendarTab.vue'
 import { useAuthStore } from '@/stores/auth'
-import { useOrganisations } from '@/composables/useOrganisations'
+import { useOrganisation, useOrganisations } from '@/composables/useOrganisations'
 import { useAdminRoles } from '@/composables/useAdminRoles'
 import { useAdminActivities } from '@/composables/useAdminActivities'
 import { useAdminUsers } from '@/composables/useAdminUsers'
@@ -26,11 +26,12 @@ const auth = useAuthStore()
 const { t } = useI18n()
 const isSuperAdmin = computed(() => auth.isSuperAdmin)
 
-const { query: orgsQuery } = useOrganisations()
+const { query: orgsQuery } = useOrganisations(isSuperAdmin)
+const { query: ownOrgQuery } = useOrganisation()
 const selectedOrgId = ref<number | undefined>(undefined)
 
 const orgId = computed(() =>
-  isSuperAdmin.value ? selectedOrgId.value : auth.user?.organisation_id ?? undefined,
+  isSuperAdmin.value ? selectedOrgId.value : (ownOrgQuery.data.value?.id ?? auth.user?.organisation_id ?? undefined),
 )
 
 const { query: rolesQuery } = useAdminRoles(orgId)

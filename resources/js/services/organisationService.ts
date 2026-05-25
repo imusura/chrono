@@ -2,6 +2,16 @@ import api from '@/httpClient'
 import type { Organisation, StoreOrganisationPayload, UpdateOrganisationPayload } from '@/types'
 
 export const organisationService = {
+  getOwn: async (): Promise<Organisation> => {
+    const { data } = await api.get<{ data: Organisation }>('/organisation')
+    return data.data
+  },
+
+  updateOwn: async (payload: UpdateOrganisationPayload): Promise<Organisation> => {
+    const { data } = await api.put<{ data: Organisation }>('/organisation', payload)
+    return data.data
+  },
+
   getAll: async (): Promise<Organisation[]> => {
     const { data } = await api.get<{ data: Organisation[] }>('/organisations')
     return data.data

@@ -53,6 +53,9 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::delete('/time-entries/{timeEntry}', [TimeEntryController::class, 'destroy']);
 
     Route::middleware('admin')->group(function (): void {
+        Route::get('/organisation', [OrganisationController::class, 'show']);
+        Route::put('/organisation', [OrganisationController::class, 'updateOwn']);
+
         Route::get('/invitations', [InvitationController::class, 'index']);
         Route::post('/invitations', [InvitationController::class, 'store']);
         Route::delete('/invitations/{invitation}', [InvitationController::class, 'destroy']);
