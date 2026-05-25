@@ -2,8 +2,62 @@
   "nav": {
     "myTime": "My Time",
     "yearOverview": "Year overview",
+    "leave": "Leave",
+    "leaveApprovals": "Leave approvals",
     "organisation": "Organisation",
     "organisations": "Organisations"
+  },
+  "leave": {
+    "title": "Leave",
+    "requestLeave": "Request leave",
+    "history": "History",
+    "noHistory": "No leave requests yet.",
+    "approve": "Approve",
+    "reject": "Reject",
+    "cancel": "Cancel",
+    "daysCount": "{count} day | {count} days",
+    "balance": {
+      "title": "Balance",
+      "daysSuffix": "days",
+      "carryover": "{days} carryover",
+      "logOnly": "Log only · no allocation"
+    },
+    "status": {
+      "draft": "Draft",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
+    },
+    "requestDialog": {
+      "title": "Request leave",
+      "type": "Type",
+      "from": "From",
+      "to": "To",
+      "workingDays": "Working days",
+      "balanceAfter": "Balance after",
+      "willPend": "Submission will await approval.",
+      "willApprove": "Will be approved immediately.",
+      "submit": "Submit",
+      "submitting": "Submitting..."
+    },
+    "cancelDialog": {
+      "title": "Cancel this request?",
+      "description": "Approved leave will release the days back to your balance. Pending requests will be withdrawn.",
+      "keep": "Keep it",
+      "confirm": "Cancel request"
+    },
+    "rejectDialog": {
+      "title": "Reject leave request",
+      "reason": "Reason",
+      "placeholder": "Explain why this request is rejected"
+    },
+    "approvals": {
+      "title": "Leave approvals",
+      "pending": "Pending",
+      "recent": "Recently decided",
+      "empty": "No pending requests."
+    }
   },
   "year": {
     "title": "Year overview",

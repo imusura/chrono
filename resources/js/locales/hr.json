@@ -2,8 +2,62 @@
   "nav": {
     "myTime": "Moje vrijeme",
     "yearOverview": "Godišnji pregled",
+    "leave": "Odsustva",
+    "leaveApprovals": "Odobrenja odsustva",
     "organisation": "Organizacija",
     "organisations": "Organizacije"
+  },
+  "leave": {
+    "title": "Odsustva",
+    "requestLeave": "Zatraži odsustvo",
+    "history": "Povijest",
+    "noHistory": "Još nema zahtjeva za odsustvom.",
+    "approve": "Odobri",
+    "reject": "Odbij",
+    "cancel": "Otkaži",
+    "daysCount": "{count} dan | {count} dana",
+    "balance": {
+      "title": "Stanje",
+      "daysSuffix": "dana",
+      "carryover": "{days} preneseno",
+      "logOnly": "Samo evidencija · bez kvote"
+    },
+    "status": {
+      "draft": "Skica",
+      "pending": "Na čekanju",
+      "approved": "Odobreno",
+      "rejected": "Odbijeno",
+      "cancelled": "Otkazano"
+    },
+    "requestDialog": {
+      "title": "Zatraži odsustvo",
+      "type": "Tip",
+      "from": "Od",
+      "to": "Do",
+      "workingDays": "Radnih dana",
+      "balanceAfter": "Stanje nakon",
+      "willPend": "Zahtjev će čekati odobrenje.",
+      "willApprove": "Bit će odmah odobreno.",
+      "submit": "Pošalji",
+      "submitting": "Slanje..."
+    },
+    "cancelDialog": {
+      "title": "Otkazati zahtjev?",
+      "description": "Odobreno odsustvo vraća dane u tvoje stanje. Zahtjevi na čekanju se povlače.",
+      "keep": "Zadrži",
+      "confirm": "Otkaži zahtjev"
+    },
+    "rejectDialog": {
+      "title": "Odbij zahtjev za odsustvom",
+      "reason": "Razlog",
+      "placeholder": "Objasni zašto je zahtjev odbijen"
+    },
+    "approvals": {
+      "title": "Odobrenja odsustva",
+      "pending": "Na čekanju",
+      "recent": "Nedavno odlučeno",
+      "empty": "Nema zahtjeva na čekanju."
+    }
   },
   "year": {
     "title": "Godišnji pregled",

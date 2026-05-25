@@ -29,6 +29,7 @@ class LeaveRequestController extends Controller
     {
         $requests = $request->user()
             ->leaveRequests()
+            ->with(['leaveType', 'approver'])
             ->orderBy('start_date', 'desc')
             ->get();
 
@@ -60,6 +61,7 @@ class LeaveRequestController extends Controller
 
         $requests = LeaveRequest::query()
             ->whereIn('user_id', $orgUserIds)
+            ->with(['user', 'leaveType', 'approver'])
             ->orderBy('start_date', 'desc')
             ->get();
 
@@ -108,7 +110,7 @@ class LeaveRequestController extends Controller
             return $req;
         });
 
-        return new LeaveRequestResource($leaveRequest);
+        return new LeaveRequestResource($leaveRequest->load(['leaveType', 'approver']));
     }
 
     public function updateStatus(UpdateLeaveRequestStatusRequest $request, LeaveRequest $leaveRequest): LeaveRequestResource
@@ -155,7 +157,7 @@ class LeaveRequestController extends Controller
             return $leaveRequest->fresh();
         });
 
-        return new LeaveRequestResource($leaveRequest);
+        return new LeaveRequestResource($leaveRequest->load(['user', 'leaveType', 'approver']));
     }
 
     public function destroy(Request $request, LeaveRequest $leaveRequest): JsonResponse

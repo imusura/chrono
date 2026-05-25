@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { LogOut, Sun, Moon, Monitor, Languages, Building2, Clock, MessageSquare, CalendarDays } from 'lucide-vue-next'
+import { LogOut, Sun, Moon, Monitor, Languages, Building2, Clock, MessageSquare, CalendarDays, Palmtree, Inbox } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import { useAppearanceStore } from '@/stores/appearance'
 import { useLocaleStore } from '@/stores/locale'
@@ -66,7 +66,19 @@ const handleLogout = async () => {
           {{ t('nav.yearOverview') }}
         </RouterLink>
       </DropdownMenuItem>
+      <DropdownMenuItem as-child>
+        <RouterLink :to="{ name: 'leave' }" class="flex items-center w-full">
+          <Palmtree class="mr-2 size-4" />
+          {{ t('nav.leave') }}
+        </RouterLink>
+      </DropdownMenuItem>
       <template v-if="authStore.isAdmin || authStore.isSuperAdmin">
+        <DropdownMenuItem as-child>
+          <RouterLink :to="{ name: 'admin.leave-approvals' }" class="flex items-center w-full">
+            <Inbox class="mr-2 size-4" />
+            {{ t('nav.leaveApprovals') }}
+          </RouterLink>
+        </DropdownMenuItem>
         <DropdownMenuItem as-child>
           <RouterLink :to="{ name: 'admin.organisation' }" class="flex items-center w-full">
             <Building2 class="mr-2 size-4" />

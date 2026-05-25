@@ -20,6 +20,18 @@ const routes: RouteRecordRaw[] = [
     meta: { auth: true },
   },
   {
+    path: '/leave',
+    name: 'leave',
+    component: () => import('@/views/LeaveView.vue'),
+    meta: { auth: true },
+  },
+  {
+    path: '/admin/leave-approvals',
+    name: 'admin.leave-approvals',
+    component: () => import('@/views/LeaveApprovalsView.vue'),
+    meta: { auth: true, admin: true },
+  },
+  {
     path: '/admin/organisations',
     name: 'admin.organisations',
     component: () => import('@/views/admin/OrganisationsView.vue'),

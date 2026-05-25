@@ -12,8 +12,11 @@ class LeaveRequestResource extends JsonResource
         return [
             'id'               => $this->id,
             'user_id'          => $this->user_id,
+            'user_name'        => $this->whenLoaded('user', fn () => $this->user->name),
             'leave_type_id'    => $this->leave_type_id,
+            'leave_type_name'  => $this->whenLoaded('leaveType', fn () => $this->leaveType->name),
             'approved_by'      => $this->approved_by,
+            'approver_name'    => $this->whenLoaded('approver', fn () => $this->approver?->name),
             'start_date'       => $this->start_date->toDateString(),
             'end_date'         => $this->end_date->toDateString(),
             'days_count'       => (float) $this->days_count,
